@@ -2,11 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cache Clearing Page</title>
+  <title>Opening Random Image...</title>
+  <script>
+    // 1. We use JavaScript ONLY to pick a number and immediately write it into a secure, native HTML element.
+    // The browser engine handles the redirect, which prevents Chrome from mangling the link.
+    window.addEventListener("DOMContentLoaded", function() {
+      var randomNumber = Math.floor(Math.random() * 3369) + 1;
+      var paddedNumber = String(randomNumber).padStart(4, '0');
+      var destinationUrl = "https://google.com" + paddedNumber + ".png";
+      
+      // Inject a secure native browser refresh tag directly into the head element
+      var metaTag = document.createElement('meta');
+      metaTag.httpEquiv = "refresh";
+      metaTag.content = "0;URL='" + destinationUrl + "'";
+      document.getElementsByTagName('head')[0].appendChild(metaTag);
+    });
+  </script>
 </head>
 <body style="background:#000000; color:#ffffff; font-family:sans-serif; text-align:center; padding-top:40vh;">
-  <h2>🛑 CACHE CLEARING PAGE 🛑</h2>
-  <p>Your browser is frozen here on purpose so you can clear its memory.</p>
-  <p>Please press <b>Ctrl + F5</b> right now to force a hard refresh!</p>
+  <h2>⚡ Opening Random Pokémon...</h2>
+  <p style="color:#666;">Handing routing to native browser engine...</p>
 </body>
 </html>
