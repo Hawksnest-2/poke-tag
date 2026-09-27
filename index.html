@@ -2,21 +2,69 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Opening Random Image...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Pokémon Picker</title>
+  <style>
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 24px 48px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: #ff3b30; /* Pokémon Red Styling */
+      border: none;
+      border-radius: 16px;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(255, 59, 48, 0.4);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .btn:active {
+      transform: scale(0.96);
+    }
+    h2 {
+      margin-bottom: 8px;
+      font-size: 26px;
+    }
+    p {
+      color: #888888;
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+  </style>
   <script>
-    // 1. Pick a clean random number index between 1 and 3369
-    var randomNumber = Math.floor(Math.random() * 3369) + 1;
-    var paddedNumber = String(randomNumber).padStart(4, '0');
-    
-    // 2. Direct absolute link path string.
-    var destinationUrl = "https://google.com" + paddedNumber + ".png";
-    
-    // 3. FIXED: This forces an immediate, top-level browser location override 
-    // that doesn't rely on broken document element insertion logic.
-    window.location.href = destinationUrl;
+    function openRandomPokemon() {
+      // 1. Pick a random number between 1 and 3369
+      var randomNumber = Math.floor(Math.random() * 3369) + 1;
+      var paddedNumber = String(randomNumber).padStart(4, '0');
+      
+      // 2. Direct absolute link path string
+      var destinationUrl = "https://google.com" + paddedNumber + ".png";
+      
+      // 3. Open directly in a new window or top-level browser tab frame
+      window.open(destinationUrl, "_top");
+    }
   </script>
 </head>
-<body style="background:#000000; color:#ffffff; font-family:sans-serif; text-align:center; padding-top:40vh;">
-  <h2>⚡ Opening Random Pokémon...</h2>
+<body>
+  <div class="container">
+    <h2>🔴 Pokémon Tag Randomizer 🔴</h2>
+    <p>Your NFC engine is initialized and ready.</p>
+    <button onclick="openRandomPokemon()" class="btn">✨ Tap to Draw Card ✨</button>
+  </div>
 </body>
 </html>
