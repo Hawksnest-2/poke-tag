@@ -3,68 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Random Pokémon Picker</title>
+  <title>Random Pokémon Card</title>
   <style>
     body {
       background-color: #000000;
       color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      width: 100vw;
       margin: 0;
+      overflow: hidden;
     }
-    .container {
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .loader {
       text-align: center;
-      padding: 20px;
-    }
-    .btn {
-      display: inline-block;
-      padding: 24px 48px;
-      font-size: 22px;
-      font-weight: bold;
-      color: #ffffff;
-      background-color: #ff3b30; /* Pokémon Red Styling */
-      border: none;
-      border-radius: 16px;
-      text-decoration: none;
-      box-shadow: 0 6px 20px rgba(255, 59, 48, 0.4);
-      cursor: pointer;
-      transition: transform 0.1s ease;
-    }
-    .btn:active {
-      transform: scale(0.96);
-    }
-    h2 {
-      margin-bottom: 8px;
-      font-size: 26px;
-    }
-    p {
-      color: #888888;
-      font-size: 16px;
-      margin-bottom: 32px;
+      color: #888;
     }
   </style>
   <script>
-    function openRandomPokemon() {
-      // 1. Pick a random number between 1 and 3369
-      var randomNumber = Math.floor(Math.random() * 3369) + 1;
+    window.onload = function() {
+      // NOTE: Change this number to match exactly how many images you currently have uploaded!
+      // For example, keep it at 100 while testing, then change it to 3369 once they are all uploaded.
+      var currentUploadedTotal = 100; 
+      
+      // 1. Instantly choose a random card number
+      var randomNumber = Math.floor(Math.random() * currentUploadedTotal) + 1;
       var paddedNumber = String(randomNumber).padStart(4, '0');
+      var imageFilename = paddedNumber + ".png";
       
-      // 2. Direct absolute link path string
-      var destinationUrl = "https://google.com" + paddedNumber + ".png";
+      // 2. NATIVE PATH: Looks directly inside your newly created /images/ subfolder
+      var imgElement = document.getElementById("pokemon-card");
+      imgElement.src = "./images/" + imageFilename;
       
-      // 3. Open directly in a new window or top-level browser tab frame
-      window.open(destinationUrl, "_top");
-    }
+      // 3. Hide the loading status text and fade the card onto the screen layout
+      document.getElementById("loading-status").style.display = "none";
+      imgElement.style.display = "block";
+    };
   </script>
 </head>
 <body>
-  <div class="container">
-    <h2>🔴 Pokémon Tag Randomizer 🔴</h2>
-    <p>Your NFC engine is initialized and ready.</p>
-    <button onclick="openRandomPokemon()" class="btn">✨ Tap to Draw Card ✨</button>
+
+  <div id="loading-status" class="loader">
+    <h2>⚡ Drawing Card...</h2>
   </div>
+
+  <!-- The image container layer starts hidden and reveals itself instantly once loaded -->
+  <img id="pokemon-card" src="" alt="Pokémon Card" style="display: none;" />
+
 </body>
 </html>
