@@ -2,23 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Opening Random Image...</title>
-  <script>
-    window.onload = function() {
-      // 1. Pick a clean random number index between 1 and 3369
-      var randomNumber = Math.floor(Math.random() * 3369) + 1;
-      var paddedNumber = String(randomNumber).padStart(4, '0');
-      
-      // 2. Direct absolute link path string. 
-      // There are no folder variables or combined codes, making a string smash error impossible.
-      var destinationUrl = "https://google.com" + paddedNumber + ".png";
-      
-      // 3. Jump to the clear destination path
-      window.location.replace(destinationUrl);
-    };
-  </script>
+  <title>Cache Clearing Page</title>
 </head>
 <body style="background:#000000; color:#ffffff; font-family:sans-serif; text-align:center; padding-top:40vh;">
-  <h2>⚡ Opening Random Pokémon...</h2>
+  <h2>🛑 CACHE CLEARING PAGE 🛑</h2>
+  <p>Your browser is frozen here on purpose so you can clear its memory.</p>
+  <p>Please press <b>Ctrl + F5</b> right now to force a hard refresh!</p>
 </body>
 </html>
