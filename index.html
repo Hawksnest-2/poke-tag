@@ -1,3 +1,6 @@
+//index.html with a link to download the cardlist
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,12 +13,22 @@
       color: #ffffff;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       display: flex;
+      flex-direction: column; /* Stack the image and the button vertically */
       justify-content: center;
       align-items: center;
       height: 100vh;
       width: 100vw;
       margin: 0;
       overflow: hidden;
+      position: relative;
+    }
+    .card-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-height: 85vh; /* Leave room for the button at the bottom */
+      width: 100%;
     }
     img {
       max-width: 100%;
@@ -26,6 +39,21 @@
     .loader {
       text-align: center;
       color: #888;
+    }
+    .download-btn {
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
+    }
+    .download-btn:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
     }
   </style>
   <script>
@@ -53,11 +81,18 @@
 </head>
 <body>
 
-  <div id="loading-status" class="loader">
-    <h2>⚡ Drawing Card...</h2>
+  <div class="card-container">
+    <div id="loading-status" class="loader">
+      <h2>⚡ Drawing Card...</h2>
+    </div>
+
+    <img id="pokemon-card" src="" alt="Pokémon Card" style="display: none;" />
   </div>
 
-  <img id="pokemon-card" src="" alt="Pokémon Card" style="display: none;" />
+  <!-- Download Link pointing to your PDF inside the folder -->
+  <a class="download-btn" href="./30th_Celebration/Card_List_30th_Celebration.pdf" download>
+    📄 Download Card List (PDF)
+  </a>
 
 </body>
 </html>
