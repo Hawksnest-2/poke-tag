@@ -55,7 +55,6 @@
       transform: scale(0.97); 
     }
 
-    /* 1. FADE-IN CLASS: Applied dynamically via JavaScript once the image finishes loading */
     .fade-in {
       animation: fadeInEffect 0.6s ease-out forwards;
     }
@@ -63,7 +62,7 @@
     @keyframes fadeInEffect {
       from {
         opacity: 0;
-        transform: scale(0.93); /* Slight growth pop effect as it appears */
+        transform: scale(0.93);
       }
       to {
         opacity: 1;
@@ -73,7 +72,7 @@
 
     #pokemon-card {
       cursor: default;
-      opacity: 0; /* Keep hidden until animation class kicks in */
+      opacity: 0;
     }
 
     .loader {
@@ -107,6 +106,19 @@
   </style>
   <script>
     function drawRandomCard() {
+      // 1. Fetch the sound element immediately
+      var catchSound = document.getElementById("catch-sound");
+
+      // 2. FIXED: "Warm up" the audio player instantly during the user's physical touch.
+      // This bypasses mobile data network timeout restrictions by claiming permission right now.
+      catchSound.play().then(function() {
+        catchSound.pause();
+        catchSound.currentTime = 0;
+      }).catch(function(e) {
+        console.log("Pre-activation skipped", e);
+      });
+
+      // 3. Hide start screen and show loading status
       document.getElementById("start-screen").style.display = "none";
       document.getElementById("pokemon-card").style.display = "none";
       document.getElementById("loading-status").style.display = "block";
@@ -124,13 +136,11 @@
       imgElement.onload = function() {
         document.getElementById("loading-status").style.display = "none";
         
-        // 2. Play the catch sound effect exactly when the image displays
-        var catchSound = document.getElementById("catch-sound");
+        // 4. Play the sound now that the file is loaded (permission is guaranteed)
         catchSound.play().catch(function(error) {
-          console.log("Audio playback blocked by mobile browser privacy settings until next user interaction.");
+          console.log("Audio blocked: ", error);
         });
 
-        // 3. Make the image block visible and add the smooth CSS animation class
         imgElement.style.display = "block";
         imgElement.classList.add("fade-in");
       };
@@ -139,7 +149,6 @@
 </head>
 <body>
 
-  <!-- Audio asset definition -->
   <audio id="catch-sound" src="./catch.mp3" preload="auto"></audio>
 
   <div class="card-container">
