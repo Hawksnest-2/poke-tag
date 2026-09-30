@@ -1,6 +1,3 @@
-//index.html with a link to download the cardlist
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +10,7 @@
       color: #ffffff;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       display: flex;
-      flex-direction: column; /* Stack the image and the button vertically */
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
@@ -27,7 +24,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      max-height: 85vh; /* Leave room for the button at the bottom */
+      max-height: 85vh;
       width: 100%;
     }
     img {
@@ -35,6 +32,10 @@
       max-height: 100%;
       object-fit: contain;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    /* Add a pointer hand icon over the images to show they are clickable */
+    #start-screen, #pokemon-card {
+      cursor: pointer;
     }
     .loader {
       text-align: center;
@@ -57,39 +58,52 @@
     }
   </style>
   <script>
-    window.onload = function() {
-      // 1. Updated to match your exact celebration file count
+    function drawRandomCard() {
+      // 1. Hide the Start Screen / display the loader
+      document.getElementById("start-screen").style.display = "none";
+      document.getElementById("pokemon-card").style.display = "none";
+      document.getElementById("loading-status").style.display = "block";
+
+      // 2. Set file configurations
       var currentUploadedTotal = 196; 
+      var targetFolder = "30th_Celebration"; 
       
-      // 2. Instantly choose a random card number between 1 and 196
+      // 3. Generate random padded number
       var randomNumber = Math.floor(Math.random() * currentUploadedTotal) + 1;
       var paddedNumber = String(randomNumber).padStart(4, '0');
       var imageFilename = paddedNumber + ".png";
       
-      // 3. TARGET FOLDER: Updated to your new celebration folder
-      var targetFolder = "30th_Celebration"; 
-      
-      // 4. Construct the path (e.g., ./30th_Celebration/0142.png)
+      // 4. Update the source image
       var imgElement = document.getElementById("pokemon-card");
       imgElement.src = "./" + targetFolder + "/" + imageFilename;
       
-      // 5. Hide the loader status and display the native card frame
-      document.getElementById("loading-status").style.display = "none";
-      imgElement.style.display = "block";
-    };
+      // 5. Reveal the new randomized card asset once fully downloaded
+      imgElement.onload = function() {
+        document.getElementById("loading-status").style.display = "none";
+        imgElement.style.display = "block";
+      };
+    }
   </script>
 </head>
 <body>
 
   <div class="card-container">
-    <div id="loading-status" class="loader">
+    <!-- 1. START SCREEN IMAGE (Visible by default) -->
+    <img id="start-screen" 
+         src="./30th_Celebration/Start_30th_Celebration.jpg" 
+         alt="Start Celebration Engine" 
+         onclick="drawRandomCard()" />
+
+    <!-- 2. LOADING STATE STATUS (Hidden initially) -->
+    <div id="loading-status" class="loader" style="display: none;">
       <h2>⚡ Drawing Card...</h2>
     </div>
 
-    <img id="pokemon-card" src="" alt="Pokémon Card" style="display: none;" />
+    <!-- 3. MAIN DYNAMIC CARD VIEW (Hidden initially, re-clicking draws a fresh random card) -->
+    <img id="pokemon-card" src="" alt="Pokémon Card" style="display: none;" onclick="drawRandomCard()" />
   </div>
 
-  <!-- Download Link pointing to your PDF inside the folder -->
+  <!-- 4. FIXED DOWNLOAD UTILITY FOOTER -->
   <a class="download-btn" href="./30th_Celebration/Card_List_30th_Celebration.pdf" download>
     📄 Download Card List (PDF)
   </a>
