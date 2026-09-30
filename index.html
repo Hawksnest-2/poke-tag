@@ -36,6 +36,7 @@
       justify-content: center;
       align-items: center;
       min-height: 0; 
+      position: relative; /* Crucial for positioning sparkles around the card */
     }
 
     img {
@@ -46,6 +47,7 @@
       box-shadow: 0 10px 40px rgba(0,0,0,0.6);
       border-radius: 4.5% / 3.5%;
       transition: transform 0.1s ease;
+      z-index: 2; /* Keeps the card cleanly on top of the background */
     }
 
     #start-screen {
@@ -81,6 +83,41 @@
       font-weight: bold;
     }
 
+    /* 1. SPARKLE PARTICLE STYLES */
+    .sparkle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: #ffd700; /* Gold sparkles */
+      border-radius: 50%;
+      pointer-events: none; /* Stops sparkles from blocking finger taps */
+      z-index: 3; /* Spawns sparkles directly in front of the card */
+      opacity: 0;
+    }
+
+    /* Alternate shapes/colors for visual variety */
+    .sparkle:nth-child(even) {
+      background-color: #ffffff; /* White diamonds */
+      border-radius: 0%;
+      transform: rotate(45deg);
+    }
+
+    .sparkle-burst {
+      animation: scatterParticle 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    @keyframes scatterParticle {
+      0% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        /* CSS variables (--x and --y) are injected dynamically via JS below */
+        transform: translate(var(--x), var(--y)) scale(0) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
     .footer-wrapper {
       width: 100%;
       display: flex;
@@ -105,12 +142,49 @@
     }
   </style>
   <script>
+    // 2. SPARKLE GENERATOR ENGINE
+    function createSparkles() {
+      var container = document.getElementById("card-wrapper");
+      var particleCount = 30; // Number of sparkles to shoot out
+
+      for (var i = 0; i < particleCount; i++) {
+        var sparkle = document.createElement("div");
+        sparkle.classList.add("sparkle");
+
+        // Calculate a random circular direction and distance to explode outward
+        var angle = Math.random() * Math.PI * 2;
+        var distance = 80 + Math.random() * 120; // Distance in pixels
+        var x = Math.cos(angle) * distance + "px";
+        var y = Math.sin(angle) * distance + "px";
+
+        // Assign the random coordinates to the CSS variables
+        sparkle.style.setProperty("--x", x);
+        sparkle.style.setProperty("--y", y);
+
+        // Randomize slight spawn offsets so they pop out from the center of the card area
+        sparkle.style.left = "calc(50% + " + (Math.random() * 40 - 20) + "px)";
+        sparkle.style.top = "calc(50% + " + (Math.random() * 40 - 20) + "px)";
+
+        // Randomize micro-delays so they explode in a wave rather than all at once
+        sparkle.style.animationDelay = (Math.random() * 0.15) + "s";
+
+        container.appendChild(sparkle);
+        sparkle.classList.add("sparkle-burst");
+
+        // Automatically clean up the sparkle elements from memory after the animation finish line
+        removeSparkleElement(sparkle);
+      }
+    }
+
+    function removeSparkleElement(element) {
+      setTimeout(function() {
+        element.remove();
+      }, 1000);
+    }
+
     function drawRandomCard() {
-      // 1. Fetch the sound element immediately
       var catchSound = document.getElementById("catch-sound");
 
-      // 2. FIXED: "Warm up" the audio player instantly during the user's physical touch.
-      // This bypasses mobile data network timeout restrictions by claiming permission right now.
       catchSound.play().then(function() {
         catchSound.pause();
         catchSound.currentTime = 0;
@@ -118,7 +192,6 @@
         console.log("Pre-activation skipped", e);
       });
 
-      // 3. Hide start screen and show loading status
       document.getElementById("start-screen").style.display = "none";
       document.getElementById("pokemon-card").style.display = "none";
       document.getElementById("loading-status").style.display = "block";
@@ -136,13 +209,15 @@
       imgElement.onload = function() {
         document.getElementById("loading-status").style.display = "none";
         
-        // 4. Play the sound now that the file is loaded (permission is guaranteed)
         catchSound.play().catch(function(error) {
           console.log("Audio blocked: ", error);
         });
 
         imgElement.style.display = "block";
         imgElement.classList.add("fade-in");
+
+        // 3. TRIGGER SPARKLES right as the image hits the screen!
+        createSparkles();
       };
     }
   </script>
@@ -151,7 +226,8 @@
 
   <audio id="catch-sound" src="./catch.mp3" preload="auto"></audio>
 
-  <div class="card-container">
+  <!-- Added an explicit ID wrapper here to anchor particle injection math -->
+  <div id="card-wrapper" class="card-container">
     <img id="start-screen" 
          src="./30th_Celebration/Start_30th_Celebration.jpg" 
          alt="Start Celebration Engine" 
