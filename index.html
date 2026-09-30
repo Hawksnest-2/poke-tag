@@ -27,6 +27,7 @@
       padding-left: 20px;
       padding-right: 20px;
       padding-bottom: env(safe-area-inset-bottom, 50px); 
+      position: relative;
     }
 
     .card-container {
@@ -36,7 +37,7 @@
       justify-content: center;
       align-items: center;
       min-height: 0; 
-      position: relative; /* Crucial for positioning sparkles around the card */
+      position: relative;
     }
 
     img {
@@ -47,7 +48,7 @@
       box-shadow: 0 10px 40px rgba(0,0,0,0.6);
       border-radius: 4.5% / 3.5%;
       transition: transform 0.1s ease;
-      z-index: 2; /* Keeps the card cleanly on top of the background */
+      z-index: 5; /* Keeps image safely on top */
     }
 
     #start-screen {
@@ -83,38 +84,24 @@
       font-weight: bold;
     }
 
-    /* 1. SPARKLE PARTICLE STYLES */
+    /* 1. UPDATED BULLETPROOF SPARKLE STYLES */
     .sparkle {
       position: absolute;
-      width: 8px;
-      height: 8px;
-      background-color: #ffd700; /* Gold sparkles */
+      pointer-events: none;
+      z-index: 99; /* Forces sparkles to render completely in front of everything */
       border-radius: 50%;
-      pointer-events: none; /* Stops sparkles from blocking finger taps */
-      z-index: 3; /* Spawns sparkles directly in front of the card */
-      opacity: 0;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+      animation: sparkleFade 0.8s linear forwards;
     }
 
-    /* Alternate shapes/colors for visual variety */
-    .sparkle:nth-child(even) {
-      background-color: #ffffff; /* White diamonds */
-      border-radius: 0%;
-      transform: rotate(45deg);
-    }
-
-    .sparkle-burst {
-      animation: scatterParticle 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-    }
-
-    @keyframes scatterParticle {
+    @keyframes sparkleFade {
       0% {
-        transform: translate(0, 0) scale(1) rotate(0deg);
         opacity: 1;
+        transform: translate(0, 0) scale(1);
       }
       100% {
-        /* CSS variables (--x and --y) are injected dynamically via JS below */
-        transform: translate(var(--x), var(--y)) scale(0) rotate(360deg);
         opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0.2);
       }
     }
 
@@ -125,6 +112,7 @@
       margin-top: 20px;
       margin-bottom: 20px;
       flex-shrink: 0;
+      z-index: 10;
     }
 
     .download-btn {
@@ -142,43 +130,60 @@
     }
   </style>
   <script>
-    // 2. SPARKLE GENERATOR ENGINE
-    function createSparkles() {
+    // 2. RE-ENGINEERED OUTWARD PARTICLE ENGINE
+    function launchSparkles() {
       var container = document.getElementById("card-wrapper");
-      var particleCount = 30; // Number of sparkles to shoot out
+      
+      // Spawn 45 distinct particles for a dense, highly visible burst
+      var particleCount = 45; 
 
       for (var i = 0; i < particleCount; i++) {
         var sparkle = document.createElement("div");
         sparkle.classList.add("sparkle");
 
-        // Calculate a random circular direction and distance to explode outward
+        // Randomly alternate colors between vivid magic gold, crisp white, and neon cyan
+        var colorPool = ["#ffd700", "#ffffff", "#00f0ff"];
+        var randomColor = colorPool[Math.floor(Math.random() * colorPool.length)];
+        sparkle.style.backgroundColor = randomColor;
+        
+        if (randomColor !== "#ffffff") {
+          sparkle.style.boxShadow = "0 0 8px " + randomColor;
+        }
+
+        // Randomize dimensions to look like natural debris shards (between 6px and 14px)
+        var size = Math.floor(Math.random() * 8) + 6;
+        sparkle.style.width = size + "px";
+        sparkle.style.height = size + "px";
+
+        // Generate wide outward explosion coordinates over cellular viewport frames
         var angle = Math.random() * Math.PI * 2;
-        var distance = 80 + Math.random() * 120; // Distance in pixels
-        var x = Math.cos(angle) * distance + "px";
-        var y = Math.sin(angle) * distance + "px";
+        var velocity = 100 + Math.random() * 150; // Radical flight path radius (up to 250px outward)
+        var dx = Math.cos(angle) * velocity + "px";
+        var dy = Math.sin(angle) * velocity + "px";
 
-        // Assign the random coordinates to the CSS variables
-        sparkle.style.setProperty("--x", x);
-        sparkle.style.setProperty("--y", y);
+        sparkle.style.setProperty("--dx", dx);
+        sparkle.style.setProperty("--dy", dy);
 
-        // Randomize slight spawn offsets so they pop out from the center of the card area
-        sparkle.style.left = "calc(50% + " + (Math.random() * 40 - 20) + "px)";
-        sparkle.style.top = "calc(50% + " + (Math.random() * 40 - 20) + "px)";
+        // Explicitly target the geometric screen center of the card frame container
+        sparkle.style.left = "50%";
+        sparkle.style.top = "50%";
+        sparkle.style.transform = "translate(-50%, -50%)";
 
-        // Randomize micro-delays so they explode in a wave rather than all at once
-        sparkle.style.animationDelay = (Math.random() * 0.15) + "s";
+        // Distribute execution timeline pacing fractions
+        sparkle.style.animationDelay = (Math.random() * 0.1) + "s";
 
         container.appendChild(sparkle);
-        sparkle.classList.add("sparkle-burst");
 
-        // Automatically clean up the sparkle elements from memory after the animation finish line
-        removeSparkleElement(sparkle);
+        // Self-delete once dropped from the viewport grid view
+        cleanUpSparkle(sparkle);
       }
     }
 
-    function removeSparkleElement(element) {
+    function cleanUpSparkle(element) {
       setTimeout(function() {
-        element.remove();
+        if (element && element.parentNode) {
+          element.parentNode.removeChild(element);
+        }
       }, 1000);
     }
 
@@ -216,8 +221,8 @@
         imgElement.style.display = "block";
         imgElement.classList.add("fade-in");
 
-        // 3. TRIGGER SPARKLES right as the image hits the screen!
-        createSparkles();
+        // 3. LAUNCH FIREWORK EFFECT
+        launchSparkles();
       };
     }
   </script>
@@ -226,7 +231,6 @@
 
   <audio id="catch-sound" src="./catch.mp3" preload="auto"></audio>
 
-  <!-- Added an explicit ID wrapper here to anchor particle injection math -->
   <div id="card-wrapper" class="card-container">
     <img id="start-screen" 
          src="./30th_Celebration/Start_30th_Celebration.jpg" 
