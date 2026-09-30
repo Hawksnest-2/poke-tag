@@ -45,27 +45,28 @@
       max-height: 65vh; 
       max-height: 65dvh;
       object-fit: contain;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.8);
       border-radius: 4.5% / 3.5%;
       transition: transform 0.1s ease;
-      z-index: 5; /* Keeps image safely on top */
+      z-index: 5; /* Card stays perfectly framed in the center layer */
     }
 
     #start-screen {
       cursor: pointer;
     }
     #start-screen:active {
-      transform: scale(0.97); 
+      transform: scale(0.95); 
     }
 
+    /* SMOOTH ZOOP FADE-IN */
     .fade-in {
-      animation: fadeInEffect 0.6s ease-out forwards;
+      animation: fadeInEffect 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
 
     @keyframes fadeInEffect {
       from {
         opacity: 0;
-        transform: scale(0.93);
+        transform: scale(0.85); /* Exaggerated pop-in scale transition */
       }
       to {
         opacity: 1;
@@ -84,24 +85,27 @@
       font-weight: bold;
     }
 
-    /* 1. UPDATED BULLETPROOF SPARKLE STYLES */
+    /* 1. UPGRADED MAGICAL CELEBRATION SPARKLES */
     .sparkle {
       position: absolute;
       pointer-events: none;
-      z-index: 99; /* Forces sparkles to render completely in front of everything */
-      border-radius: 50%;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-      animation: sparkleFade 0.8s linear forwards;
+      z-index: 99; /* Forces particles to overlay cleanly over the card face */
+      animation: magicBurst 1.5s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
     }
 
-    @keyframes sparkleFade {
+    @keyframes magicBurst {
       0% {
         opacity: 1;
-        transform: translate(0, 0) scale(1);
+        transform: translate(-50%, -50%) translate(0, 0) scale(1) rotate(0deg);
       }
+      /* 30% of the timeline is the violent explosion outward */
+      30% {
+        opacity: 1;
+      }
+      /* Remaining 70% simulates drifting gravity and slow atmospheric decay */
       100% {
         opacity: 0;
-        transform: translate(var(--dx), var(--dy)) scale(0.2);
+        transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) translateY(120px) scale(0) rotate(540deg);
       }
     }
 
@@ -130,51 +134,60 @@
     }
   </style>
   <script>
-    // 2. RE-ENGINEERED OUTWARD PARTICLE ENGINE
-    function launchSparkles() {
+    // 2. GIANT FIREWORK CELEBRATION DISPENSER
+    function launchHugeCelebration() {
       var container = document.getElementById("card-wrapper");
       
-      // Spawn 45 distinct particles for a dense, highly visible burst
-      var particleCount = 45; 
+      // Increased count for a hyper-dense impact field
+      var particleCount = 60; 
 
       for (var i = 0; i < particleCount; i++) {
         var sparkle = document.createElement("div");
         sparkle.classList.add("sparkle");
 
-        // Randomly alternate colors between vivid magic gold, crisp white, and neon cyan
-        var colorPool = ["#ffd700", "#ffffff", "#00f0ff"];
-        var randomColor = colorPool[Math.floor(Math.random() * colorPool.length)];
-        sparkle.style.backgroundColor = randomColor;
+        // Premium legendary color matrix: Gold, Holographic Blue, Stardust Pink, and Pure White
+        var colors = [
+          { main: "#ffd700", glow: "rgba(255, 215, 0, 0.9)" },
+          { main: "#00f0ff", glow: "rgba(0, 240, 255, 0.9)" },
+          { main: "#ff007f", glow: "rgba(255, 0, 127, 0.9)" },
+          { main: "#ffffff", glow: "rgba(255, 255, 255, 0.9)" }
+        ];
+        var config = colors[Math.floor(Math.random() * colors.length)];
         
-        if (randomColor !== "#ffffff") {
-          sparkle.style.boxShadow = "0 0 8px " + randomColor;
+        sparkle.style.backgroundColor = config.main;
+        sparkle.style.boxShadow = "0 0 15px " + config.glow + ", 0 0 30px " + config.glow;
+
+        // SHAPE GENERATOR: 50% stars/diamonds, 50% circular energy orbs
+        if (Math.random() > 0.5) {
+          sparkle.style.borderRadius = "0%";
+          // Randomly skew angles to create diamond sparkles
+          sparkle.style.transform = "rotate(" + (Math.random() * 360) + "deg)"; 
+        } else {
+          sparkle.style.borderRadius = "50%";
         }
 
-        // Randomize dimensions to look like natural debris shards (between 6px and 14px)
-        var size = Math.floor(Math.random() * 8) + 6;
+        // MASSIVE SIZE TWEAK: Ranging from 8px up to a chunky 24px across
+        var size = Math.floor(Math.random() * 16) + 8;
         sparkle.style.width = size + "px";
         sparkle.style.height = size + "px";
 
-        // Generate wide outward explosion coordinates over cellular viewport frames
+        // MASSIVE FLIGHT RADII: Shoots up to 380px outward, comfortably clearing the mobile card layout boundaries
         var angle = Math.random() * Math.PI * 2;
-        var velocity = 100 + Math.random() * 150; // Radical flight path radius (up to 250px outward)
+        var velocity = 150 + Math.random() * 230; 
         var dx = Math.cos(angle) * velocity + "px";
         var dy = Math.sin(angle) * velocity + "px";
 
         sparkle.style.setProperty("--dx", dx);
         sparkle.style.setProperty("--dy", dy);
 
-        // Explicitly target the geometric screen center of the card frame container
+        // Center point initialization inside the parent wrapper bounds
         sparkle.style.left = "50%";
         sparkle.style.top = "50%";
-        sparkle.style.transform = "translate(-50%, -50%)";
 
-        // Distribute execution timeline pacing fractions
-        sparkle.style.animationDelay = (Math.random() * 0.1) + "s";
+        // Staggered timeline delays ensure the fireworks ripple instead of locking up at once
+        sparkle.style.animationDelay = (Math.random() * 0.2) + "s";
 
         container.appendChild(sparkle);
-
-        // Self-delete once dropped from the viewport grid view
         cleanUpSparkle(sparkle);
       }
     }
@@ -184,7 +197,7 @@
         if (element && element.parentNode) {
           element.parentNode.removeChild(element);
         }
-      }, 1000);
+      }, 1700); // Extended element lifespan to perfectly match the 1.5s CSS drifting loop timeline
     }
 
     function drawRandomCard() {
@@ -221,8 +234,8 @@
         imgElement.style.display = "block";
         imgElement.classList.add("fade-in");
 
-        // 3. LAUNCH FIREWORK EFFECT
-        launchSparkles();
+        // 3. BLAST THE SCREEN
+        launchHugeCelebration();
       };
     }
   </script>
