@@ -131,6 +131,35 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    /* PDF EMBED STATE CONTAINER */
+    #pdf-view-screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      z-index: 20;
+    }
+
+    .pdf-frame {
+      width: 100%;
+      max-width: 800px;
+      height: 75vh;
+      height: 75dvh;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background-color: #111;
+    }
+
+    .back-btn-container {
+      margin-top: 15px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
     }
   </style>
   <script>
@@ -238,12 +267,26 @@
         launchHugeCelebration();
       };
     }
+
+    // STATE CONTROLLERS FOR DYNAMIC PDF VIEWING
+    function openPdfViewer() {
+      document.getElementById("card-wrapper").style.display = "none";
+      document.getElementById("footer-navigation").style.display = "none";
+      document.getElementById("pdf-view-screen").style.display = "flex";
+    }
+
+    function closePdfViewer() {
+      document.getElementById("pdf-view-screen").style.display = "none";
+      document.getElementById("card-wrapper").style.display = "flex";
+      document.getElementById("footer-navigation").style.display = "flex";
+    }
   </script>
 </head>
 <body>
 
   <audio id="catch-sound" src="./catch.mp3" preload="auto"></audio>
 
+  <!-- MAIN ENGINE SCREEN CARD CONTAINER -->
   <div id="card-wrapper" class="card-container">
     <img id="start-screen" 
          src="./30th_Celebration/Start_30th_Celebration.jpg" 
@@ -257,10 +300,19 @@
     <img id="pokemon-card" src="" alt="Pokémon Card" style="display: none;" />
   </div>
 
-  <div class="footer-wrapper">
-    <a class="download-btn" href="./30th_Celebration/Card_List_30th_Celebration.pdf" target="_blank" rel="noopener noreferrer">
+  <!-- INTERACTIVE OVERLAY PDF SCREEN -->
+  <div id="pdf-view-screen" style="display: none;">
+    <iframe class="pdf-frame" src="./30th_Celebration/Card_List_30th_Celebration.pdf"></iframe>
+    <div class="back-btn-container">
+      <button class="download-btn" onclick="closePdfViewer()">⬅ Back to Game</button>
+    </div>
+  </div>
+
+  <!-- MAIN BOTTOM FOOTER WRAPPER -->
+  <div id="footer-navigation" class="footer-wrapper">
+    <button class="download-btn" onclick="openPdfViewer()">
       📄 View Card List (PDF)
-    </a>
+    </button>
   </div>
 
 </body>
