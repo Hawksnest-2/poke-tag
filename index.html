@@ -1,320 +1,606 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Random Pokémon Card</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    body {
-      background-color: #000000;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      height: 100vh;
-      height: 100dvh; 
-      width: 100vw;
-      margin: 0;
-      overflow: hidden;
-      padding-top: 15px;
-      padding-left: 15px;
-      padding-right: 15px;
-      padding-bottom: env(safe-area-inset-bottom, 15px); 
-      position: relative;
-    }
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    .card-container {
-      width: 100%;
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 0; 
-      position: relative;
-    }
+<title>30th Celebration Collection</title>
 
-    img {
-      max-width: 100%;
-      max-height: 65vh; 
-      max-height: 65dvh;
-      object-fit: contain;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.8);
-      border-radius: 4.5% / 3.5%;
-      transition: transform 0.1s ease;
-      z-index: 5; /* Card stays perfectly framed in the center layer */
-    }
+<script src="cardData.js"></script>
 
-    #start-screen {
-      cursor: pointer;
-    }
-    #start-screen:active {
-      transform: scale(0.95); 
-    }
+<style>
 
-    /* SMOOTH ZOOP FADE-IN */
-    .fade-in {
-      animation: fadeInEffect 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
-    @keyframes fadeInEffect {
-      from {
-        opacity: 0;
-        transform: scale(0.85); /* Exaggerated pop-in scale transition */
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  overflow:auto;
+  padding-bottom:80px;
+}
+.card-container{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
+  padding:10px;
+  position:relative;
+}
 
-    #pokemon-card {
-      cursor: default;
-      opacity: 0;
-    }
+#pokemon-card,
+#start-screen{
+  max-width:100%;
+  max-height:45vh;
+  object-fit:contain;
+  box-shadow:0 15px 50px rgba(0,0,0,.8);
+}
 
-    .loader {
-      text-align: center;
-      color: #aaa;
-      font-weight: bold;
-    }
+#footer-navigation{
+  position:fixed;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  z-index:1000;
+  pointer-events: none;
+}
 
-    /* 1. UPGRADED MAGICAL CELEBRATION SPARKLES */
-    .sparkle {
-      position: absolute;
-      pointer-events: none;
-      z-index: 99; /* Forces particles to overlay cleanly over the card face */
-      animation: magicBurst 1.5s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
-    }
+#footer-navigation .download-btn{
+  pointer-events: auto;
+}
 
-    @keyframes magicBurst {
-      0% {
-        opacity: 1;
-        transform: translate(-50%, -50%) translate(0, 0) scale(1) rotate(0deg);
-      }
-      /* 30% of the timeline is the violent explosion outward */
-      30% {
-        opacity: 1;
-      }
-      /* Remaining 70% simulates drifting gravity and slow atmospheric decay */
-      100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) translateY(120px) scale(0) rotate(540deg);
-      }
-    }
+#start-screen{
+  cursor:pointer;
+}
 
-    .footer-wrapper {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin-top: 15px;
-      margin-bottom: 15px;
-      flex-shrink: 0;
-      z-index: 10;
-    }
+#card-info{
+  margin-top:6px;
+  margin-bottom:6px;
+  text-align:center;
+  display:none;
+}
 
-    .download-btn {
-      padding: 14px 28px;
-      background-color: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 25px;
-      font-size: 1rem;
-      font-weight: bold;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      cursor: pointer;
-    }
+#card-name{
+  font-size:1.25rem;
+  font-weight:bold;
+  margin-bottom:2px;
+}
 
-    /* PERFECT SCREEN-FITTED CONTROLS */
-    #pdf-view-screen {
-      width: 100%;
-      flex: 1; /* Automatically consumes the exact middle screen territory */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 0; /* Important: allows layout contraction on small mobile viewport */
-      z-index: 20;
-    }
+#card-number{
+  margin-top:4px;
+  color:#ccc;
+}
 
-    .pdf-frame {
-      width: 100%;
-      flex: 1; /* Automatically occupies maximum height room above back button */
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      background-color: #111;
-      margin-bottom: 15px;
-    }
+#card-rarity{
+  margin-top:6px;
+  font-weight:bold;
+}
 
-    .back-btn-container {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      flex-shrink: 0; /* Stops the button from shrinking out of view */
-      margin-bottom: 15px;
-    }
-  </style>
-  <script>
-    // 2. GIANT FIREWORK CELEBRATION DISPENSER
-    function launchHugeCelebration() {
-      var container = document.getElementById("card-wrapper");
-      
-      // Increased count for a hyper-dense impact field
-      var particleCount = 60; 
+#collection-status{
+  margin-top:4px;
+  font-weight:bold;
+}
 
-      for (var i = 0; i < particleCount; i++) {
-        var sparkle = document.createElement("div");
-        sparkle.classList.add("sparkle");
+.button-row{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  margin:4px;
+}
 
-        // Premium legendary color matrix: Gold, Holographic Blue, Stardust Pink, and Pure White
-        var colors = [
-          { main: "#ffd700", glow: "rgba(255, 215, 0, 0.9)" },
-          { main: "#00f0ff", glow: "rgba(0, 240, 255, 0.9)" },
-          { main: "#ff007f", glow: "rgba(255, 0, 127, 0.9)" },
-          { main: "#ffffff", glow: "rgba(255, 255, 255, 0.9)" }
-        ];
-        var config = colors[Math.floor(Math.random() * colors.length)];
-        
-        sparkle.style.backgroundColor = config.main;
-        sparkle.style.boxShadow = "0 0 15px " + config.glow + ", 0 0 30px " + config.glow;
+.download-btn{
+  padding:16px 30px;
+  border-radius:30px;
+  border:none;
+  cursor:pointer;
+  color:#fff;
+  background:rgba(255,255,255,.20);
+  font-size:1rem;
+  font-weight:bold;
+}
 
-        // SHAPE GENERATOR: 50% stars/diamonds, 50% circular energy orbs
-        if (Math.random() > 0.5) {
-          sparkle.style.borderRadius = "0%";
-          // Randomly skew angles to create diamond sparkles
-          sparkle.style.transform = "rotate(" + (Math.random() * 360) + "deg)"; 
-        } else {
-          sparkle.style.borderRadius = "50%";
-        }
+.loader{
+  display:none;
+}
 
-        // MASSIVE SIZE TWEAK: Ranging from 8px up to a chunky 24px across
-        var size = Math.floor(Math.random() * 16) + 8;
-        sparkle.style.width = size + "px";
-        sparkle.style.height = size + "px";
+.fade-in{
+  animation:fadeIn .5s ease forwards;
+}
 
-        // MASSIVE FLIGHT RADII: Shoots up to 380px outward, comfortably clearing the mobile card layout boundaries
-        var angle = Math.random() * Math.PI * 2;
-        var velocity = 150 + Math.random() * 230; 
-        var dx = Math.cos(angle) * velocity + "px";
-        var dy = Math.sin(angle) * velocity + "px";
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:scale(.85);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
 
-        sparkle.style.setProperty("--dx", dx);
-        sparkle.style.setProperty("--dy", dy);
+/* Binder */
 
-        // Center point initialization inside the parent wrapper bounds
-        sparkle.style.left = "50%";
-        sparkle.style.top = "50%";
+#binder-header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#000;
+  padding:10px 12px;
 
-        // Staggered timeline delays ensure the fireworks ripple instead of locking up at once
-        sparkle.style.animationDelay = (Math.random() * 0.2) + "s";
+  border-bottom:1px solid rgba(255,255,255,.15);
+}
 
-        container.appendChild(sparkle);
-        cleanUpSparkle(sparkle);
-      }
-    }
+#binder-header h2{
+  margin:0;
+  font-size:1.2rem;
+}
 
-    function cleanUpSparkle(element) {
-      setTimeout(function() {
-        if (element && element.parentNode) {
-          element.parentNode.removeChild(element);
-        }
-      }, 1700); // Extended element lifespan to perfectly match the 1.5s CSS drifting loop timeline
-    }
+#binder-counter{
+font-weight:bold;
+color:#ddd;
+font-size:.95rem;
+}
 
-    function drawRandomCard() {
-      var catchSound = document.getElementById("catch-sound");
+#binder-summary{
+  position:sticky;
+  top:65px;
 
-      catchSound.play().then(function() {
-        catchSound.pause();
-        catchSound.currentTime = 0;
-      }).catch(function(e) {
-        console.log("Pre-activation skipped", e);
-      });
+  background:#000;
 
-      document.getElementById("start-screen").style.display = "none";
-      document.getElementById("pokemon-card").style.display = "none";
-      document.getElementById("loading-status").style.display = "block";
+  text-align:center;
 
-      var currentUploadedTotal = 196; 
-      var targetFolder = "30th_Celebration"; 
-      
-      var randomNumber = Math.floor(Math.random() * currentUploadedTotal) + 1;
-      var paddedNumber = String(randomNumber).padStart(4, '0');
-      var imageFilename = paddedNumber + ".png";
-      
-      var imgElement = document.getElementById("pokemon-card");
-      imgElement.src = "./" + targetFolder + "/" + imageFilename;
-      
-      imgElement.onload = function() {
-        document.getElementById("loading-status").style.display = "none";
-        
-        catchSound.play().catch(function(error) {
-          console.log("Audio blocked: ", error);
-        });
+  padding:8px;
 
-        imgElement.style.display = "block";
-        imgElement.classList.add("fade-in");
+  z-index:999;
+}
 
-        // 3. BLAST THE SCREEN
-        launchHugeCelebration();
-      };
-    }
+#binder-screen{
+  display:none;
+  flex:1;
+  overflow-y:auto;
+  width:100%;
+  padding:10px;
+}
 
-    // STATE CONTROLLERS FOR DYNAMIC PDF VIEWING
-    function openPdfViewer() {
-      document.getElementById("card-wrapper").style.display = "none";
-      document.getElementById("footer-navigation").style.display = "none";
-      document.getElementById("pdf-view-screen").style.display = "flex";
-    }
+#binder-grid{
+  display:grid;
+  grid-template-columns:
+      repeat(auto-fill,minmax(90px,1fr));
+  gap:6px;
+}
 
-    function closePdfViewer() {
-      document.getElementById("pdf-view-screen").style.display = "none";
-      document.getElementById("card-wrapper").style.display = "flex";
-      document.getElementById("footer-navigation").style.display = "flex";
-    }
-  </script>
+.binder-card{
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;
+  padding:6px;
+  text-align:center;
+  background:#111;
+}
+
+.binder-card img{
+  width:100%;
+  border-radius:6px;
+}
+
+.small{
+  font-size:.65rem;
+}
+
+#pdf-view-screen{
+  display:none;
+  width:100%;
+  flex:1;
+  flex-direction:column;
+}
+
+.pdf-frame{
+  flex:1;
+  width:100%;
+}
+
+.rarity-common{color:#b6b6b6;}
+.rarity-rare{color:#ffffff;}
+.rarity-double{color:#ffffff;}
+.rarity-ir{color:#f6c343;}
+.rarity-sir{color:#ffdf6b;}
+.rarity-pika{color:#ffd400;}
+.rarity-future{color:#59d7c4;}
+.rarity-classic{color:#dddddd;}
+
+.sparkle{
+  position:absolute;
+  pointer-events:none;
+  z-index:99;
+  animation:magicBurst 1.5s forwards;
+}
+
+@keyframes magicBurst{
+  from{
+    opacity:1;
+    transform:translate(-50%,-50%);
+  }
+  to{
+    opacity:0;
+    transform:
+      translate(-50%,-50%)
+      translate(var(--dx),var(--dy))
+      scale(0);
+  }
+}
+
+</style>
 </head>
+
 <body>
 
-  <audio id="catch-sound" src="./catch.mp3" preload="auto"></audio>
+<audio id="catch-sound"
+       src="./catch.mp3"
+       preload="auto"></audio>
 
-  <!-- MAIN ENGINE SCREEN CARD CONTAINER -->
-  <div id="card-wrapper" class="card-container">
-    <img id="start-screen" 
-         src="./30th_Celebration/Start_30th_Celebration.jpg" 
-         alt="Start Celebration Engine" 
-         onclick="drawRandomCard()" />
+<div id="card-wrapper" class="card-container">
 
-    <div id="loading-status" class="loader" style="display: none;">
-      <h2>⚡ Catching...</h2>
-    </div>
+<img id="start-screen"
+  src="./30th_Celebration/Start_30th_Celebration.jpg"
+  alt="Start Celebration Engine"
+  onclick="drawRandomCard()">
 
-    <img id="pokemon-card" src="" alt="Pokémon Card" style="display: none;" />
+  <div id="loading-status" class="loader">
+    <h2>⚡ Catching...</h2>
   </div>
 
-  <!-- INTERACTIVE OVERLAY PDF SCREEN (FLUID SCREEN FIT) -->
-  <div id="pdf-view-screen" style="display: none;">
-    <iframe class="pdf-frame" src="./30th_Celebration/Card_List_30th_Celebration.pdf"></iframe>
-    <div class="back-btn-container">
-      <button class="download-btn" onclick="closePdfViewer()">⬅ Back to Game</button>
-    </div>
+  <img id="pokemon-card"
+       alt="Pokemon Card"
+       style="display:none;">
+
+  <div id="card-info">
+      <div id="card-name"></div>
+      <div id="card-number"></div>
+      <div id="card-rarity"></div>
+      <div id="collection-status"></div>
+  </div>
+</div>
+
+<div id="binder-screen">
+  <div id="binder-header">
+      <button class="download-btn"
+              onclick="closeBinder()">
+          ⬅ Back
+      </button>
+      <h2>My Collection</h2>
+      <div id="binder-counter">
+          0/196
+      </div>
   </div>
 
-  <!-- MAIN BOTTOM FOOTER WRAPPER -->
-  <div id="footer-navigation" class="footer-wrapper">
-    <button class="download-btn" onclick="openPdfViewer()">
-      📄 View Card List (PDF)
+  <div id="binder-grid"></div>
+
+  <div class="button-row">
+      <button class="download-btn"
+              onclick="resetCollection()">
+          ⚠️ Reset Collection
+      </button>
+  </div>
+</div>
+
+
+<div id="footer-navigation"
+     class="button-row">
+  <button class="download-btn"
+          onclick="viewCollection()">
+      📚 My Collection
+  </button>
+</div>
+
+<div id="card-modal"
+     style="
+       display:none;
+       position:fixed;
+       inset:0;
+       background:rgba(0,0,0,.95);
+       z-index:9999;
+       justify-content:center;
+       align-items:center;
+       flex-direction:column;">
+    <img id="modal-card-image"
+         style="
+           max-width:95%;
+           max-height:80vh;
+           object-fit:contain;">
+    <button class="download-btn"
+            onclick="closeCardModal()"
+            style="margin-top:15px;">
+        Close
     </button>
-  </div>
 
+</div>
+
+<script>
+
+const TOTAL_CARDS = 196;
+const FOLDER = "30th_Celebration";
+
+function getCollection() {
+    return JSON.parse(
+        localStorage.getItem("pokemonCollection") || "[]"
+    );
+}
+
+function saveCollection(collection){
+    localStorage.setItem(
+        "pokemonCollection",
+        JSON.stringify(collection)
+    );
+}
+
+function getRarityBadge(rarity){
+    switch(rarity){
+        case "Common":
+            return "●";
+        case "Rare":
+            return "★";
+        case "Double Rare":
+            return "★★";
+        case "Illustration Rare":
+            return "⭐";
+        case "Special Illustration Rare":
+            return "⭐⭐";
+        case "Pikachu Rare":
+            return "❤";
+        case "Futuristic Rare":
+            return "✦";
+        case "Classic Collection":
+            return "★C";
+        default:
+            return "";
+    }
+}
+
+function drawRandomCard(){
+
+    const audio =
+      document.getElementById(
+        "catch-sound"
+      );
+
+    audio.currentTime = 0;
+
+    audio.play().catch(err =>
+      console.log("Audio:", err)
+    );
+
+    let randomId =
+        Math.floor(Math.random() * TOTAL_CARDS) + 1;
+
+    let fileName =
+        String(randomId)
+          .padStart(4,'0') + ".png";
+    let card =
+        cardData[randomId];
+    let collection =
+        getCollection();
+    let isNew =
+        !collection.includes(randomId);
+    if(isNew){
+        collection.push(randomId);
+        saveCollection(collection);
+    }
+    const cardImg =
+      document.getElementById("pokemon-card");
+    cardImg.style.display = "none";
+    cardImg.src =
+      "./"+FOLDER+"/"+fileName;
+    document.getElementById(
+      "loading-status"
+    ).style.display = "block";
+    cardImg.onload = function(){
+
+cardImg.style.display="block";
+cardImg.classList.remove("fade-in");
+void cardImg.offsetWidth;
+cardImg.classList.add("fade-in");
+      document.getElementById(
+        "loading-status"
+      ).style.display = "none";
+      document.getElementById(
+        "start-screen"
+      ).style.display="none";
+      document.getElementById(
+        "card-info"
+      ).style.display="block";
+      document.getElementById(
+        "card-name"
+      ).textContent =
+        card.name;
+      document.getElementById(
+        "card-number"
+      ).innerHTML =
+        "#" +
+        card.cardNumber +
+        " • " +
+        getRarityBadge(card.rarity) +
+        " " +
+        card.rarity;
+      document.getElementById(
+        "card-rarity"
+      ).style.display = "none";
+
+      let total =
+        collection.length;
+      document.getElementById(
+        "collection-status"
+      ).innerHTML =
+        (isNew
+          ? "🎉 NEW CARD COLLECTED"
+          : "✅ Already Collected")
+        +"<br>"
+        + total +" / "
+        + TOTAL_CARDS
+        +" Collected";
+      launchHugeCelebration();
+    };
+}
+
+function buildBinder(){
+    const grid =
+      document.getElementById("binder-grid");
+    grid.innerHTML="";
+    const collection =
+      getCollection();
+    for(let i=1;i<=TOTAL_CARDS;i++){
+        const card =
+          cardData[i];
+        const owned =
+          collection.includes(i);
+        const file =
+          String(i)
+          .padStart(4,"0")
+          + ".png";
+        const div =
+          document.createElement("div");
+        div.className =
+          "binder-card";
+        div.innerHTML = `
+          <img
+            src="${
+               owned
+                ? './' + FOLDER + '/' + file
+                : './' + FOLDER + '/card-back.jpg'
+            }">
+          <div class="small">
+            #${card.cardNumber}
+          </div>
+          <div class="small">
+            ${card.name}
+          </div>
+          <div class="small">
+            ${getRarityBadge(card.rarity)}
+          </div>
+          `;
+          if(owned){
+             div.style.cursor = "pointer";
+             div.onclick = function(){
+                openCardModal(i);       
+             };
+          }
+        grid.appendChild(div);
+            }
+        document.getElementById(
+          "binder-counter"
+        ).textContent =
+          collection.length +
+          "/" +
+          TOTAL_CARDS;
+        }
+
+function viewCollection(){
+    buildBinder();
+    document.getElementById(
+      "card-wrapper"
+    ).style.display="none";
+    document.getElementById(
+      "footer-navigation"
+    ).style.display="none";
+    document.getElementById(
+      "binder-screen"
+    ).style.display="block";
+}
+
+function openCardModal(cardId){
+    let file =
+      String(cardId)
+      .padStart(4,"0")
+      + ".png";
+    document.getElementById(
+      "modal-card-image"
+    ).src = "./" + FOLDER + "/" + file;
+    document.getElementById(
+      "card-modal"
+    ).style.display = "flex";
+}
+
+function closeCardModal(){
+    document.getElementById(
+      "card-modal"
+    ).style.display = "none";
+}
+
+function closeBinder(){
+    document.getElementById(
+      "binder-screen"
+    ).style.display="none";
+    document.getElementById(
+      "card-wrapper"
+    ).style.display="flex";
+    document.getElementById(
+      "footer-navigation"
+    ).style.display="flex";
+}
+
+function resetCollection(){
+
+    if (
+        confirm(
+            "⚠️ This will erase your entire collection.\n\nContinue?"
+        )
+    ){
+
+        localStorage.removeItem(
+            "pokemonCollection"
+        );
+
+        buildBinder();
+    }
+}
+
+function launchHugeCelebration(){
+    const container =
+      document.getElementById(
+        "card-wrapper"
+      );
+    for(let i=0;i<40;i++){
+        const s =
+          document.createElement("div");
+        s.className="sparkle";
+        s.style.background =
+          ["#ffd700",
+           "#00f0ff",
+           "#ff007f",
+           "#ffffff"]
+           [Math.floor(Math.random()*4)];
+        s.style.width="10px";
+        s.style.height="10px";
+        s.style.borderRadius="50%";
+        s.style.left="50%";
+        s.style.top="50%";
+        s.style.setProperty(
+          "--dx",
+          (Math.random()*400-200)+"px"
+        );
+        s.style.setProperty(
+          "--dy",
+          (Math.random()*400-200)+"px"
+        );
+        container.appendChild(s);
+        setTimeout(()=>{
+            s.remove();
+        },1500);
+    }
+}
+</script>
 </body>
 </html>
