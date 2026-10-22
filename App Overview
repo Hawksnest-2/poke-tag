@@ -1,0 +1,227 @@
+# Poké‑Center Web App  
+A single‑page web application for browsing, tracking, and collecting Pokémon card sets.  
+Includes dynamic collection loading, rarity visualization, a card viewer, a catch mechanic,  
+and a personal Pokedex that persists across sessions.
+
+---
+
+## 📦 Project Structure
+root/
+│
+├── index.html
+│
+├── css/
+│   ├── collection-selector.css
+│   ├── card-viewer.css
+│   └── my-pokedex.css
+│
+├── js/
+│   └── collection-selector.js
+│
+├── collections/
+│   └── <collectionId>/
+│       └── cardData.js
+│
+├── assets/
+│   ├── logos/
+│   ├── audio/
+│   └── icons/
+│
+├── manifest.js
+└── rarity.js
+
+
+---
+
+## 🎮 Features
+
+### **1. Collection Selector**
+Browse all available Pokémon card sets.  
+Each set displays its logo and name, pulled from `manifest.js`.
+
+### **2. Collection Overview**
+Shows:
+- Total cards  
+- Owned cards  
+- Rarity breakdown (Common, Uncommon, Rare)  
+- Animated progress bars  
+- Collection logo  
+- Catch button (randomly grants an unowned card)
+
+### **3. Card Viewer**
+Displays every card in the selected set:
+- Owned cards show their real image  
+- Unowned cards show a cardback  
+- Clicking a card opens a fullscreen modal  
+- Includes pinch‑zoom support on mobile
+
+### **4. Catch Mechanic**
+Click the catch icon to receive a random unowned card:
+- Card is marked owned  
+- Modal displays the card  
+- Viewer refreshes after closing the modal  
+- Ownership persists via `localStorage`
+
+### **5. Pokedex (formerly My Collections)**
+Shows all collections where the user owns at least one card:
+- Displays collection logo  
+- Shows owned/total progress  
+- Clicking a tile jumps directly into the viewer
+
+### **6. Persistent Storage**
+Owned cards are saved in `localStorage`:
+- Automatically loaded on startup  
+- Automatically saved after catch/reset actions  
+- Uses a fast in‑memory `Map` for lookups
+
+---
+
+## 🧠 Architecture Overview
+
+This project is a **single‑page application (SPA)**:
+
+### **Screens**
+- Home (Poké‑Center)
+- Collection Selector
+- Collection Overview
+- Card Viewer
+- Pokedex
+- Card Modal
+
+### **Controller**
+All logic lives in:  js/collection-selector.js
+
+It handles:
+- Screen switching  
+- Data loading  
+- Rendering  
+- Catch logic  
+- Reset logic  
+- Modal logic  
+- Storage lifecycle  
+- Event flow  
+
+### **Data Modules**
+- `manifest.js` → list of collections  
+- `rarity.js` → rarity icons  
+- `/collections/<id>/cardData.js` → card lists  
+
+---
+
+## 🔄 Data Flow Summary
+manifest.js + rarity.js
+↓
+collection-selector.js
+↓
+loadCollectionData() → cardData.js
+↓
+ownedCards Map ←→ localStorage
+↓
+render functions → DOM
+↓
+user actions → JS events
+↓
+saveOwnedCards() → localStorage
+
+
+---
+
+## 🗂 Storage Lifecycle
+
+- On startup → `loadOwnedCards()` loads from `localStorage`
+- On catch/reset → `saveOwnedCards()` writes to `localStorage`
+- Viewer/overview/pokedex screens update immediately
+
+---
+
+## 🎯 Catch Logic Summary
+
+1. Find unowned cards  
+2. Pick one at random  
+3. Mark it owned  
+4. Save to `localStorage`  
+5. Show modal  
+6. Refresh viewer after modal closes  
+
+---
+
+## 🧹 Reset Logic Summary
+
+1. Confirm reset  
+2. Remove all owned keys for the current collection  
+3. Save to `localStorage`  
+4. Refresh viewer  
+
+---
+
+## 🖼 Modal Logic Summary
+
+- Opens when clicking a card  
+- Shows front image if owned  
+- Shows cardback if unowned  
+- Displays rarity icon + text  
+- Applies rarity border color  
+- Supports pinch‑zoom  
+- Closes with ✖  
+- Refreshes viewer if catch was used  
+
+---
+
+## 🚀 Getting Started
+
+### **1. Clone the repo**
+```bash
+git clone https://github.com/<yourname>/poke-center.git
+cd poke-center
+
+2. Run locally
+Use any static server:
+npx serve
+Or open index.html directly in a browser.
+
+3. Deploy to GitHub Pages
+Push to GitHub and enable Pages in repo settings.
+
+🧩 Adding a New Collection
+1. Create a folder:
+/collections/<NewCollectionId>/
+
+2. Add cardData.js with an array of card objects:
+export default [
+  {
+    cardNumber: 1,
+    name: "Example Pokémon",
+    rarity: "Rare",
+    file: "001.png"
+  },
+  ...
+];
+
+3. Add logo to:
+/assets/logos/
+
+4. Add entry to manifest.js:
+{ id: "<NewCollectionId>", name: "New Set Name", logo: "<logoFile>" }
+Done — the app will automatically detect and load it.
+
+🛠 Technologies Used
+Vanilla JavaScript
+
+Dynamic ES module imports
+
+LocalStorage persistence
+
+CSS Grid + Flexbox
+
+Single‑page DOM screen switching
+
+Mobile pinch‑zoom support
+
+📄 License
+This project is open for personal use, learning, and customization.
+Feel free to fork and modify.
+
+❤️ Credits
+Created by Tom.
+Refactored and documented with the help of Microsoft Copilot.
+---
