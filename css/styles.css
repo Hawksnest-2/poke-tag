@@ -1,0 +1,857 @@
+/*************************************************
+GLOBAL
+*************************************************/
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Locks the browser window frame securely */
+}
+
+body {
+  background: #0f0f0f;
+  color: #f0f0f0;
+  font-family: Arial, sans-serif;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+/*************************************************
+SHARED BUTTONS & ICONS
+*************************************************/
+.return-button,
+.pokedex-button {
+  background-color: transparent;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  transition: background 0.15s ease, transform 0.10s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.return-button:active,
+.pokedex-button:active {
+  background: #444;
+  transform: scale(0.97);
+}
+
+.pokedex-icon,
+.pc-icon-small {
+  width: 75px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.collection-icon-small {
+  width: 200px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/*************************************************
+HOME PAGE
+*************************************************/
+#main-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  width: 100vw;             /* Takes full width flush to screen edges */
+  box-sizing: border-box;
+  padding-top: 10px;
+  background-color: #0f0f0f;
+  /* NEW: Locks the main home layout container solidly to the screen viewport frame */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;            /* Claims exact screen dimensions */
+  overflow: hidden;         /* Kills default browser page double-scrolling completely */
+}
+
+/* New Scroll Layer Architecture for Home Screen Selection */
+
+#home-scroll-layer {
+  width: 100%;
+  flex: 1;                  /* Dynamically claims all left over height below the buttons */
+  overflow-y: auto;         /* Turns on clean vertical container scrolling exclusively */
+  padding-bottom: 30px;     /* Safe padding space at the bottom of the collection tile grid */
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+.main-title,
+#home-pokedex-button {
+  flex-shrink: 0;
+}
+
+#main-header .subtitle {
+  font-size: 1.8rem;
+  max-width: 90%;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+.main-logo {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.pc-logo {
+  width: 240px;
+  height: auto;
+}
+
+.title {
+  text-align: center;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  margin: 0 !important;
+}
+
+.subtitle {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+.collection-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 14px;
+  margin: 16px auto 0 auto;
+  max-width: 95%;
+}
+
+.collection-tile {
+  background: #1a1a1a;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 2px solid #333;
+}
+
+.collection-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0,0,0,.35);
+  border-color: #555;
+}
+
+.collection-logo {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.collection-name {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin-top: 6px;
+}
+
+/*************************************************
+COLLECTION OVERVIEW
+*************************************************/
+.collection-overview {
+  padding: 20px;
+  margin: 0 auto;
+  width: 100vw;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #0f0f0f;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Turns on clean scrolling inside the panel boundaries */
+  z-index: 50;
+}
+
+.overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Ensure the header layouts inside the overview panel spread out nicely */
+.collection-overview .overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-shrink: 0;
+  padding-bottom: 10px;
+}
+
+
+.overview-title {
+  text-align: center;
+  font-size: 2.2rem;
+  margin: 20px 0 10px;
+}
+
+.overview-logo {
+  width: 300px;
+  height: auto;
+  display: block;
+  margin: 10px auto 20px;
+}
+
+.overview-stats-title {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.overview-catch-title {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
+.overview-progress {
+  margin-top: 10px;
+}
+
+.overview-progress p {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 2rem;
+}
+
+.overview-rarity-row {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.rarity-icon {
+  font-size: 2.4rem;
+}
+
+.rarity-label {
+  font-size: 1.9rem;
+}
+
+.rarity-bar {
+  background: #333;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 10px;
+}
+
+.rarity-fill {
+  background: #0078ff;
+  height: 100%;
+  width: 0%;
+  transition: width .3s ease;
+}
+
+.rarity-text {
+  font-size: 1.7rem;
+  color: #ccc;
+}
+
+/*************************************************
+CATCH SECTION
+*************************************************/
+.catch-images {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.catch-image {
+  background-color: transparent;
+  color: #ffffff;
+  border: none;
+  display: block;
+  width: 250px;
+  height: auto;
+  cursor: pointer;
+}
+
+/*************************************************
+CARD VIEWER
+*************************************************/
+.card-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background-color: #0f0f0f;
+  display: flex;  
+  flex-direction: column;
+  overflow: hidden; /* Stops headers from escaping the viewport boundaries */
+  z-index: 60;
+}
+
+/* Lock down header sizing boundaries */
+.card-viewer .overview-header,
+.viewer-header-logo-group {
+  flex-shrink: 0; /* Forces buttons, logo, and filter to stay fixed at the top */
+}
+
+/* Force vertical scrolling panel boundaries exclusively for card tiles grid */
+#viewer-scroll-layer {
+  width: 100%;
+  flex: 1; /* Automatically claims 100% of left over height */
+  overflow-y: auto; /* Turns on clean scrolling only inside this layer wrapper */
+  padding-bottom: 40px;            
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+.card-viewer-title {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+  max-width: 100%;
+}
+
+.card-tile {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+
+.card-tile:hover {
+  transform: translateY(-4px);
+}
+
+.card-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.card-info {
+  text-align: center;
+  margin-top: 8px;
+  font-size: .9rem;
+  color: #ddd;
+}
+
+.card-number {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.card-name {
+  font-size: .95rem;
+  margin-bottom: 2px;
+}
+
+.card-rarity {
+  font-size: .85rem;
+  opacity: .9;
+}
+
+.viewer-header-logo-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex-shrink: 0; /* Prevents the logo section from squishing */
+  margin: 5px auto 10px auto;
+}
+
+.viewer-header-logo-group .return-button {
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border: none;
+}
+
+.viewer-collection-title {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 1.3rem;
+  color: #ccc;
+}
+
+/* Card Viewer Filter Row Container styles */
+.viewer-filter-bar {
+  margin: 5px auto 5px auto; /* Tightens padding space below the logo */
+}
+
+
+.filter-dropdown, .settings-dropdown-input {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  min-width: 180px;
+}
+
+.settings-dropdown-input {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.filter-dropdown:focus, .settings-dropdown-input:focus {
+  border-color: #0078ff;
+}
+
+/*************************************************
+CARD MODAL
+*************************************************/
+.card-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.card-modal-content {
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 90%;
+  width: 340px;
+  box-sizing: border-box;
+  border: 4px solid transparent;
+  overflow: hidden; /* CRITICAL: Crops the overflowing card edge graphics inside the dialog card cleanly */
+}
+
+
+.rarity-common { border-color: #666; }
+.rarity-uncommon { border-color: #3fa9f5; }
+.rarity-rare { border-color: #f5c542; }
+
+.modal-close-bar {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.modal-close-btn {
+  position: static !important;
+  margin: 0;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.modal-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.modal-card-body img {
+  width: 100%;
+  height: auto;
+  max-height: 65vh;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-top: 0;
+  touch-action: none;
+  transform-origin: center center;
+}
+
+/* Consolidated Metadata Row Layout */
+.modal-metadata {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  margin-top: 10px;
+  gap: 2px;
+}
+
+/* System-UI Font Stack applied uniformly across all elements */
+#modal-number,
+#modal-name,
+#modal-rarity-text {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  text-align: center;
+  margin: 0;
+}
+
+/* Custom individual line weights and hierarchies */
+#modal-number {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+#modal-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+#modal-rarity-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #cccccc;
+}
+
+/* Dynamic Inline Layout for Icons on Line 3 */
+#modal-rarity-icon {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  margin-right: 4px;
+}
+
+/*************************************************
+RESET BUTTON
+*************************************************/
+.reset-button {
+  background: #8b0000;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: block;
+  margin: 20px auto 0;
+  width: fit-content;
+}
+
+.reset-button:hover {
+  background: #a30000;
+}
+
+/*************************************************
+MY POKEDEX
+*************************************************/
+.pokedex {
+  padding: 0; 
+  margin: 0 auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background-color: #0f0f0f; 
+  display: flex;  
+  flex-direction: column;
+  overflow: hidden;         
+  z-index: 100; 
+}
+
+.pokedex .overview-header {
+  position: sticky;
+  top: 0;
+  background-color: #0f0f0f;
+  padding: 14px 20px 6px 20px; 
+  z-index: 10;
+  margin-bottom: 0; /* Cleared margin to keep calculation accurate */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#pokedex-scroll-layer {
+  width: 100%;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 0 20px 30px 20px; 
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pokedex-logo {
+  width: 150px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.pokedex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 24px;
+  margin-top: 16px;
+  max-width: 100%;
+}
+
+.mc-tile {
+  background: #1a1a1a;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid #333;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.mc-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0,0,0,.35);
+}
+
+.mc-logo {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.mc-progress {
+  margin-top: 10px;
+  color: #ccc;
+  font-size: 1.1rem;
+}
+
+/*************************************************
+MY POKEDEX SUBTITLE CENTER OVERRIDE
+*************************************************/
+.pokedex-view-title {
+  display: block;          /* Breaks away from flex constraints to take full width */
+  text-align: center;       /* Centers the text completely within the row */
+  width: 100%;             /* Spans across the entire viewport width */
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin: 10px 0 5px 0;    /* Resets margins for precise box alignment */
+  box-sizing: border-box;
+}
+
+/*************************************************
+SETTINGS MANAGEMENT VIEW PANEL
+*************************************************/
+.settings-view {
+  padding: 20px;
+  margin: 0 auto;
+  width: 100vw;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #0f0f0f;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.settings-gear-btn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: transparent;
+  border: none;
+  font-size: 2.2rem;
+  cursor: pointer;
+  z-index: 99999 !important; /* Forces icon to render on top of the fixed layout layer */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.settings-card {
+  background: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: left;
+}
+
+.settings-card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+}
+
+.settings-card p {
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+/* Form Actions Button Definitions */
+.settings-action-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.feedback-btn {
+  background-color: #0078ff;
+  color: #fff;
+}
+
+/* Sound Checkbox Formatting Row Layout */
+.toggle-control-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.toggle-control-row input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+}
+
+.toggle-label-text {
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+/* Backup Database Data String Export Text Box */
+#settings-backup-box {
+  width: 100%;
+  height: 60px;
+  background: #0f0f0f;
+  color: #888;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px;
+  font-family: monospace;
+  font-size: 0.8rem;
+  box-sizing: border-box;
+  resize: none;
+  margin-bottom: 12px;
+}
+
+.settings-button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.copy-btn { background-color: #444; color: #fff; }
+.import-btn { background-color: #2e7d32; color: #fff; }
+.danger-zone { border-color: #8b0000; }
+.reset-all-btn { background-color: #8b0000; color: #fff; }
+/*************************************************
+SETTINGS MENU: RARITY LEGEND TABLE
+*************************************************/
+.legend-scroll-box {
+  width: 100%;
+  max-height: 220px;       /* Keeps the table compact with a dedicated inner scrollbar */
+  overflow-y: auto;        /* Restricts scrolling strictly to inside this list container */
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #0f0f0f;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+.legend-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.legend-table th, .legend-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #222;
+}
+
+.legend-table th {
+  background-color: #151515;
+  color: #888;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;                  /* Freezes the table headers while scrolling individual rows */
+  z-index: 2;
+}
+
+/* Specific alignments matching emblem icon distributions */
+.legend-table td:first-child {
+  font-size: 1.2rem;
+  width: 30%;              /* Allocates strict spacing width dimensions for symbols lane */
+  text-align: center;
+}
+
+.legend-table td:last-child {
+  color: #ffffff;
+}
+
+/* Subtle zebra striping for crisp row scannability */
+.legend-table tbody tr:nth-child(even) {
+  background-color: #131313;
+}
