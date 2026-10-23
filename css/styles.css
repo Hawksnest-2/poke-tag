@@ -2332,7 +2332,7 @@ Quiz Arena
     display: flex;
     flex-direction: column;
 
-    justify-content: space-between;
+    justify-content: flex-start;
 
     flex: 1;
 
@@ -2355,7 +2355,8 @@ Quiz Arena
     align-items: center;
     justify-content: center;
 
-    flex: 1;
+    flex: 0;
+	min-height: 120px;
 
     margin-bottom: 20px;
 
