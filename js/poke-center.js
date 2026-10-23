@@ -576,6 +576,126 @@ async function renderPokedexPage() {
 }
 
 /******************************************************************************
+GYM CHALLENGE SETUP
+******************************************************************************/
+function configureGymChallengeSetup() {
+
+    const countContainer =
+        document.getElementById("quiz-count-options");
+    if (!countContainer) return;
+	
+	const setupTitle =
+    document.getElementById("quiz-setup-title");
+
+	const themeClasses = [
+		"quiz-theme-pokeball",
+		"quiz-theme-greatball",
+		"quiz-theme-ultraball",
+		"quiz-theme-masterball"
+	];
+		document.body.classList.remove(
+			...themeClasses
+		);
+	const countCard =
+		document.getElementById("quiz-count-card");
+	const categoryCard =
+		document.getElementById("quiz-category-card");
+    countContainer.innerHTML = "";
+	countCard?.classList.add("quiz-themed-card");
+	categoryCard?.classList.add("quiz-themed-card");
+    let counts = [];
+
+    switch (selectedQuizTier) {
+		case "easy":
+			counts = [3, 5];
+			if (setupTitle) {
+				setupTitle.textContent =
+					"Poké Ball Challenge";
+				setupTitle.classList.add(
+					"quiz-themed-title"
+				);
+			}
+			document.body.classList.add(
+				"quiz-theme-pokeball"
+			);
+			break;
+    case "medium":
+        counts = [5, 10];
+			if (setupTitle) {
+				setupTitle.textContent =
+					"Great Ball Challenge";
+				setupTitle.classList.add(
+					"quiz-themed-title"
+				);
+			}
+			document.body.classList.add(
+				"quiz-theme-greatball"
+			);
+			break;
+    case "hard":
+        counts = [5, 10];
+			if (setupTitle) {
+				setupTitle.textContent =
+					"Ultra Ball Challenge";
+				setupTitle.classList.add(
+					"quiz-themed-title"
+				);
+			}
+			document.body.classList.add(
+				"quiz-theme-ultraball"
+			);
+			break;
+    case "expert":
+        counts = [10, 15];
+			if (setupTitle) {
+				setupTitle.textContent =
+					"Master Ball Challenge";
+				setupTitle.classList.add(
+					"quiz-themed-title"
+				);
+			}
+			document.body.classList.add(
+				"quiz-theme-masterball"
+			);
+			break;
+}
+
+    selectedQuestionCount = counts[0];
+
+    counts.forEach((count, index) => {
+
+        const btn = document.createElement("button");
+
+        btn.className =
+            index === 0
+                ? "param-tile active"
+                : "param-tile";
+
+        btn.dataset.value = count;
+
+        btn.textContent = count;
+
+        btn.addEventListener("click", () => {
+
+            countContainer
+                .querySelectorAll(".param-tile")
+                .forEach(tile =>
+                    tile.classList.remove("active")
+                );
+
+            btn.classList.add("active");
+
+            selectedQuestionCount = count;
+
+        });
+
+        countContainer.appendChild(btn);
+
+    });
+
+}
+
+/******************************************************************************
 EVENT LISTENERS
 ******************************************************************************/
 /* Home */
@@ -720,44 +840,60 @@ if (legendCloseBtn) {
 
 /* 2x2 Arena Gauntlet Mode Listeners */
 const gauntletButtons = document.querySelectorAll(".quiz-gauntlet-grid .gym-portal-btn");
+
 gauntletButtons.forEach(btn => {
+
     btn.addEventListener("click", (e) => {
-        const selectedTier = e.currentTarget.getAttribute("data-tier");
-        
-        if (selectedTier === "easy") {
-            const countChoice = prompt("Select Poké Ball Question Count:\nType '3' or '5'", "3");
-            if (countChoice === "3" || countChoice === "5") {
-                buildAdvancedMixPlaylist("easy", parseInt(countChoice));
-            } else {
-                alert("Invalid selection. Challenge aborted.");
-            }
-        } 
-        else if (selectedTier === "medium") {
-            const countChoice = prompt("Select Great Ball Question Count:\nType '5' or '10'", "5");
-            if (countChoice === "5" || countChoice === "10") {
-                buildAdvancedMixPlaylist("medium", parseInt(countChoice));
-            } else {
-                alert("Invalid selection. Challenge aborted.");
-            }
-        }
-        else if (selectedTier === "hard") {
-            const countChoice = prompt("Select Ultra Ball Question Count:\nType '5' or '10'", "5");
-            if (countChoice === "5" || countChoice === "10") {
-                buildAdvancedMixPlaylist("hard", parseInt(countChoice));
-            } else {
-                alert("Invalid selection. Challenge aborted.");
-            }
-        }
-        else if (selectedTier === "expert") {
-            const countChoice = prompt("Select Master Ball Question Count:\nType '10' or '15'", "10");
-            if (countChoice === "10" || countChoice === "15") {
-                buildAdvancedMixPlaylist("expert", parseInt(countChoice));
-            } else {
-                alert("Invalid selection. Challenge aborted.");
-            }
-        }
-    });
+		selectedQuizTier =
+			e.currentTarget.getAttribute("data-tier");
+		configureGymChallengeSetup();
+
+		showScreen("quiz-setup");
+	});
 });
+
+/* GYM CHALLENGE Setup listeners*/
+const categoryTiles =
+    document.querySelectorAll(
+        "#quiz-category-options .param-tile"
+    );
+
+categoryTiles.forEach(tile => {
+
+    tile.addEventListener("click", () => {
+
+        categoryTiles.forEach(t =>
+            t.classList.remove("active")
+        );
+
+        tile.classList.add("active");
+
+        selectedQuizCategory =
+            tile.getAttribute("data-value");
+
+        console.log(
+            "Category:",
+            selectedQuizCategory
+        );
+
+    });
+
+});
+const startQuizBattleBtn =
+    document.getElementById("start-quiz-battle-btn");
+
+if (startQuizBattleBtn) {
+
+    startQuizBattleBtn.addEventListener("click", () => {
+
+        buildAdvancedMixPlaylist(
+            selectedQuizTier,
+            selectedQuestionCount
+        );
+
+    });
+
+}
 
 
 /******************************************************************************
@@ -849,6 +985,10 @@ let quizPlaylist = [];
 let quizCurrentIndex = 0;
 let quizScore = 0;
 let rewardQueueCount = 0;
+let selectedQuizCategory = "random";
+let selectedQuizTier = null;
+let selectedQuestionCount = 1;
+let quizResults = [];
 
 /* Rarity Legend Grid Injection Renderer */
 function renderRarityLegendGrid() {
@@ -882,47 +1022,53 @@ function renderRarityLegendGrid() {
 
 /* High-Yield Algorithmic Gauntlet Generation Loop Engine */
 function buildAdvancedMixPlaylist(tier, totalCount) {
-    let primaryPool = [];
+    let categoryQuestionPool =
+    selectedQuizCategory === "random"
+        ? quizQuestions
+        : quizQuestions.filter(
+            q => q.category === selectedQuizCategory
+        );
+	let primaryPool = [];
     let secondaryPool = [];
     let primaryTargetCount = 0;
     let secondaryTargetCount = 0;
 
     if (tier === "easy") {
-        primaryPool = quizQuestions.filter(q => q.difficulty === "easy");
+        primaryPool = categoryQuestionPool.filter(q => q.difficulty === "easy");
         primaryTargetCount = totalCount;
     } 
     else if (tier === "medium") {
         if (!isExpertQuizMode) {
-            primaryPool = quizQuestions.filter(q => q.difficulty === "medium");
-            secondaryPool = quizQuestions.filter(q => q.difficulty === "hard");
+            primaryPool = categoryQuestionPool.filter(q => q.difficulty === "medium");
+            secondaryPool = categoryQuestionPool.filter(q => q.difficulty === "hard");
         } else {
-            primaryPool = quizQuestions.filter(q => q.difficulty === "hard");
-            secondaryPool = quizQuestions.filter(q => q.difficulty === "expert");
+            primaryPool = categoryQuestionPool.filter(q => q.difficulty === "hard");
+            secondaryPool = categoryQuestionPool.filter(q => q.difficulty === "expert");
         }
         primaryTargetCount = (totalCount === 5) ? 4 : 8;
         secondaryTargetCount = (totalCount === 5) ? 1 : 2;
     }
     else if (tier === "hard") {
         if (!isExpertQuizMode) {
-            primaryPool = quizQuestions.filter(q => q.difficulty === "medium");
-            secondaryPool = quizQuestions.filter(q => q.difficulty === "hard");
+            primaryPool = categoryQuestionPool.filter(q => q.difficulty === "medium");
+            secondaryPool = categoryQuestionPool.filter(q => q.difficulty === "hard");
             primaryTargetCount = (totalCount === 5) ? 2 : 4;
             secondaryTargetCount = (totalCount === 5) ? 3 : 6;
         } else {
-            primaryPool = quizQuestions.filter(q => q.difficulty === "hard");
-            secondaryPool = quizQuestions.filter(q => q.difficulty === "expert");
+            primaryPool = categoryQuestionPool.filter(q => q.difficulty === "hard");
+            secondaryPool = categoryQuestionPool.filter(q => q.difficulty === "expert");
             primaryTargetCount = (totalCount === 5) ? 2 : 4;
             secondaryTargetCount = (totalCount === 5) ? 3 : 6;
         }
     }
     else if (tier === "expert") {
         if (!isExpertQuizMode) {
-            primaryPool = quizQuestions.filter(q => q.difficulty === "hard");
-            secondaryPool = quizQuestions.filter(q => q.difficulty === "expert");
+            primaryPool = categoryQuestionPool.filter(q => q.difficulty === "hard");
+            secondaryPool = categoryQuestionPool.filter(q => q.difficulty === "expert");
             primaryTargetCount = (totalCount === 10) ? 5 : 9;
             secondaryTargetCount = (totalCount === 10) ? 5 : 6;
         } else {
-            primaryPool = quizQuestions.filter(q => q.difficulty === "expert");
+            primaryPool = categoryQuestionPool.filter(q => q.difficulty === "expert");
             primaryTargetCount = totalCount;
         }
     }
@@ -954,6 +1100,7 @@ function buildAdvancedMixPlaylist(tier, totalCount) {
     quizPlaylist = combinedPlaylist;
     quizCurrentIndex = 0;
     quizScore = 0;
+	quizResults = [];
 
     const badge = document.getElementById("quiz-difficulty-badge");
     if (badge) {
@@ -1001,12 +1148,17 @@ function renderActiveQuizQuestionCard() {
         for (let i = 0; i < quizPlaylist.length; i++) {
             const step = document.createElement("span");
             if (i < quizCurrentIndex) {
-                step.textContent = "⚫";
-            } else if (i === quizCurrentIndex) {
-                step.textContent = "🟡";
-            } else {
-                step.textContent = "⚪";
-            }
+				step.textContent =
+					quizResults[i]
+						? "🟢"
+						: "🔴";
+			}
+			else if (i === quizCurrentIndex) {
+				step.textContent = "🟡";
+			}
+			else {
+				step.textContent = "⚪";
+			}
             trackEl.appendChild(step);
         }
     }
@@ -1029,6 +1181,7 @@ function handleOptionChoiceClick(selectedIndex) {
     optionButtons.forEach(btn => btn.disabled = true);
 
 	const isCorrect = selectedIndex === currentQuestion.shuffledCorrectIndex;
+	quizResults.push(isCorrect);
     if (isCorrect) {
         quizScore++;
         optionButtons[selectedIndex].style.background = "#2e7d32";

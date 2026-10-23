@@ -129,24 +129,22 @@
          ========================================== -->
     <div id="quiz-setup-page" class="settings-view">
         <div class="overview-header">
-            <button id="quiz-setup-return-btn" class="return-button">⬅️ Overview</button>
-            <h1 class="title">Gym Challenge</h1>
+            <button id="quiz-setup-return-btn" class="return-button">⬅️ Back to Gym</button>
+				<h1 id="quiz-setup-title" class="title">
+				Gym Challenge
+				</h1>
             <div style="width:75px;"></div>
         </div>
         
         <div class="settings-container">
-            <div class="settings-card">
+            <div id="quiz-count-card" class="settings-card">
                 <h3>🔢 Number of Questions</h3>
                 <p>Select how many challenges you want to face in this run.</p>
                 <div class="quiz-param-grid" id="quiz-count-options">
-                    <button class="param-tile active" data-value="1">1</button>
-                    <button class="param-tile" data-value="5">5</button>
-                    <button class="param-tile" data-value="10">10</button>
-                    <button class="param-tile" data-value="15">15</button>
                 </div>
             </div>
 
-            <div class="settings-card">
+            <div id="quiz-category-card" class="settings-card">
                 <!-- Re-mapped Challenge Category Selection Grid -->
 				<h3>🗂 Challenge Category</h3>
 				<p>Choose your elemental training topic track.</p>

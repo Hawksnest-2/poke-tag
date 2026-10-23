@@ -721,25 +721,34 @@ startQuizBattle()
     letter-spacing: 0.5px;
 }
 
+/* =========================================================
+   Pokeball Color Variants
+========================================================= */
+:root {
+    --pokeball-color: #ef5350;
+    --greatball-color: #29b6f6;
+    --ultraball-color: #fbc02d;
+    --masterball-color: #ab47bc;
+}
 
 /* =========================================================
    Difficulty Color Variants
 ========================================================= */
 
 .ball-pokeball {
-    border-color: #ef5350 !important;
+    border-color: var(--pokeball-color) !important;
 }
 
 .ball-greatball {
-    border-color: #29b6f6 !important;
+    border-color: var(--greatball-color) !important;
 }
 
 .ball-ultraball {
-    border-color: #fbc02d !important;
+    border-color: var(--ultraball-color) !important;
 }
 
 .ball-masterball {
-    border-color: #ab47bc !important;
+    border-color: var(--masterball-color) !important;
 }
 
 
@@ -754,6 +763,36 @@ startQuizBattle()
     display: block;
 
     object-fit: contain;
+}
+
+/* =========================================================
+   Quiz Related
+========================================================= */
+
+.quiz-themed-title {
+    color: var(--challenge-color);
+}
+.quiz-themed-card {
+    border-color: var(--challenge-color) !important;
+}
+/* =========================================================
+   Quiz Color Variants 
+========================================================= */
+
+.quiz-theme-pokeball {
+    --challenge-color: var(--pokeball-color);
+}
+
+.quiz-theme-greatball {
+    --challenge-color: var(--greatball-color);
+}
+
+.quiz-theme-ultraball {
+    --challenge-color: var(--ultraball-color);
+}
+
+.quiz-theme-masterball {
+    --challenge-color: var(--masterball-color);
 }
 
 /************************************************************
