@@ -9,7 +9,8 @@
       "purpose": "any"
     }
   ],
-  "start_url": "/index.html",
+  "start_url": "./index.html",
+  "scope": "./",
   "background_color": "#0f0f0f",
   "theme_color": "#0f0f0f",
   "display": "standalone",

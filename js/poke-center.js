@@ -200,7 +200,16 @@ function loadOwnedCards() {
         isExpertQuizMode = savedExpertMode === "true";
         if (settingsQuizExpertToggle) settingsQuizExpertToggle.checked = isExpertQuizMode;
     }
+
+    // 5. Standalone Display Mode Checker
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        const installRow = document.getElementById("install-instruction-row");
+        if (installRow) {
+            installRow.style.display = "none";
+        }
+    }
 }
+
 
 /******************************************************************************
 SCREEN MANAGEMENT
@@ -837,6 +846,20 @@ if (legendOpenBtn) {
 if (legendCloseBtn) {
     legendCloseBtn.addEventListener("click", () => showScreen("settings"));
 }
+
+/* Install Guide Alert Modal Trigger */
+const installGuideBtn = document.getElementById("settings-install-guide-btn");
+if (installGuideBtn) {
+    installGuideBtn.addEventListener("click", () => {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            alert("📱 To run in Full Screen on iOS:\n\n1. Tap the Safari SHARE button (square with up arrow) at the bottom of your screen.\n2. Scroll down and tap 'Add to Home Screen'.\n3. Launch the new icon from your home screen layout!");
+        } else {
+            alert("🤖 To run in Full Screen on Android:\n\n1. Tap the Chrome menu button (three vertical dots) in the top-right corner.\n2. Select 'Install app' or 'Add to Home screen'.\n3. Open the application directly from your device launcher drawer!");
+        }
+    });
+}
+
 
 /* 2x2 Arena Gauntlet Mode Listeners */
 const gauntletButtons = document.querySelectorAll(".quiz-gauntlet-grid .gym-portal-btn");
