@@ -22,7 +22,7 @@ Related JS:
 --------------------------------------------------------- */
 html,
 body {
-    height: 100vh;
+    height: 100dvh;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -224,7 +224,7 @@ Purpose:
     gap: 8px;
 
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
 
     box-sizing: border-box;
     padding-top: 10px;
@@ -452,7 +452,7 @@ Purpose:
     margin: 0 auto;
 
     width: 100vw;
-    min-height: 100vh;
+    min-height: 100dvh;
 
     box-sizing: border-box;
 
@@ -827,7 +827,7 @@ Purpose:
     left: 0;
 
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
 
     box-sizing: border-box;
 
@@ -1312,7 +1312,7 @@ Purpose:
     left: 0;
 
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
 
     margin: 0 auto;
     padding: 0;
@@ -1365,7 +1365,7 @@ Purpose:
 #pokedex-scroll-layer {
     width: 100%;
 
-    max-height: calc(100vh - 120px);
+    max-height: calc(100dvh - 120px);
 
     overflow-y: auto;
 
@@ -1605,7 +1605,7 @@ Settings Managed:
     left: 0;
 
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
 
     margin: 0 auto;
     padding: 20px;
@@ -2023,7 +2023,7 @@ Settings → View Legend
     left: 0;
 
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
 
     display: flex;
     flex-direction: column;
