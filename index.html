@@ -2,44 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-    <title>Poké‑Center</title>
-    <link rel="stylesheet"
-          href="./css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Poké‑Center Collection Manager</title>
+    <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
 
+    <!-- Hidden Native Core Audio Drivers -->
     <audio id="catch-sound" src="./assets/audio/catch.mp3" preload="auto"></audio>
 
     <!-- ==========================================
          HOME PAGE
-         ========================================== -->
+    ========================================== -->
     <div id="main-header">
-        <!-- Settings Gear Icon locked to top left corner -->
-        <button id="settings-open-btn" class="settings-gear-btn">⚙️</button>
+        <div class="main-buttons">
+			<button id="settings-open-btn" class="settings-gear-btn">⚙️</button>
+
+			<button id="home-pokedex-button" class="pokedex-button">
+				<img src="./assets/logos/pokedex.png" alt="Pokedex logo" class="pokedex-icon">
+				Pokédex
+			</button>
+        </div>
 
         <div class="main-title">
             <img src="./assets/logos/Poke_Center.png" alt="Poké‑Center" class="main-logo">
             <h1 class="title">Poké‑Center</h1>
         </div>
-        
-        <button id="home-pokedex-button" class="pokedex-button">
-            <img src="./assets/logos/pokedex.png" alt="Pokedex logo" class="pokedex-icon">
-            Pokédex
-        </button>
-        
-        <!-- Scrolling items container layer -->
+       
         <div id="home-scroll-layer">
             <h2 class="subtitle">Select a Collection</h2>
             <div id="collection-selector" class="collection-selector"></div>
         </div>
     </div>
 
+
     <!-- ==========================================
          COLLECTION OVERVIEW PAGE
          ========================================== -->
     <div id="collection-overview" class="collection-overview hidden">
+        <!-- Persistent Header: Stays locked at the top -->
         <div class="overview-header">
             <button id="overview-return-button" class="return-button">
                 <img src="./assets/logos/Poke_Center.png" alt="Home" class="pc-icon-small">
@@ -51,32 +52,69 @@
             </button>
         </div>
         
+        <!-- Clean Layout: Elements stay perfectly locked inside the visible viewport area -->
         <img id="overview-logo" class="overview-logo" src="" alt="Collection Logo">
-        <h2 id="overview-catch-title" class="subtitle overview-catch-title"></h2>
         
-        <div class="catch-images">
-            <img id="catch-open-image" src="./assets/logos/catchbutton.png" alt="Catch Pokémon" class="catch-image">
-        </div>
+        <!-- Side-by-Side Dual Interaction Modes -->
+		<!-- Fully Enabled 2x2 Gym Challenge Portal Layout Matrix -->
+<!-- Enhanced 2x2 Gym Challenge Portal Layout Matrix with Custom Image Tokens -->
+		<div class="catch-title-row">
+		<h3 class="overview-catch-title">🛡️ Select Your Gym Challenge Gauntlet</h3>
+		</div>
+
+		<div class="quiz-gauntlet-grid">
+			<!-- Pokeball: Easy Tier Gauntlet Entry -->
+			<div class="gauntlet-card" data-tier="easy">
+				<button class="gym-portal-btn ball-pokeball" data-tier="easy">
+				<img src="./assets/logos/Poke_Ball.webp" alt="Poké Ball" class="gauntlet-ball-img" />
+				</button>
+				<span class="mode-label">Poké Ball</span>
+				<span class="sub-label">Easy Tier</span>
+			</div>
+
+			<!-- Greatball: Medium Tier Gauntlet Entry -->
+			<div class="gauntlet-card" data-tier="medium">
+				<button class="gym-portal-btn ball-greatball" data-tier="medium">
+				<img src="./assets/logos/Great_Ball.webp" alt="Great Ball" class="gauntlet-ball-img" />
+				</button>
+				<span class="mode-label">Great Ball</span>
+				<span class="sub-label">Medium Tier</span>
+			</div>
+
+			<!-- Ultraball: Hard Tier Gauntlet Entry -->
+			<div class="gauntlet-card" data-tier="hard">
+				<button class="gym-portal-btn ball-ultraball" data-tier="hard">
+				<img src="./assets/logos/Ultra_Ball.webp" alt="Ultra Ball" class="gauntlet-ball-img" />
+				</button>
+				<span class="mode-label">Ultra Ball</span>
+				<span class="sub-label">Hard Tier</span>
+			</div>
+
+			<!-- Masterball: Expert Tier Gauntlet Entry -->
+			<div class="gauntlet-card" data-tier="expert">
+				<button class="gym-portal-btn ball-masterball" data-tier="expert">
+				<img src="./assets/logos/Master_Ball.webp" alt="Master Ball" class="gauntlet-ball-img" />
+				</button>
+				<span class="mode-label">Master Ball</span>
+				<span class="sub-label">Expert Tier</span>
+			</div>
+		</div>
+
         
-        <div id="overview-stats-title" class="subtitle overview-stats-title"></div>
-        
-        <div id="overview-progress" class="overview-progress">
+        <div class="overview-progress">
             <p id="overview-total"></p>
-            
             <div class="overview-rarity-row">
                 <span class="rarity-icon" id="rarity-common-icon"></span>
                 <span class="rarity-label">Common</span>
                 <div class="rarity-bar"><div id="rarity-common-fill" class="rarity-fill"></div></div>
                 <span id="rarity-common-text" class="rarity-text"></span>
             </div>
-            
             <div class="overview-rarity-row">
                 <span class="rarity-icon" id="rarity-uncommon-icon"></span>
                 <span class="rarity-label">Uncommon</span>
                 <div class="rarity-bar"><div id="rarity-uncommon-fill" class="rarity-fill"></div></div>
                 <span id="rarity-uncommon-text" class="rarity-text"></span>
             </div>
-            
             <div class="overview-rarity-row">
                 <span class="rarity-icon" id="rarity-rare-icon"></span>
                 <span class="rarity-label">Rare</span>
@@ -87,10 +125,75 @@
     </div>
 
     <!-- ==========================================
+         QUIZ PARAMETERS SETUP VIEW
+         ========================================== -->
+    <div id="quiz-setup-page" class="settings-view">
+        <div class="overview-header">
+            <button id="quiz-setup-return-btn" class="return-button">⬅️ Overview</button>
+            <h1 class="title">Gym Challenge</h1>
+            <div style="width:75px;"></div>
+        </div>
+        
+        <div class="settings-container">
+            <div class="settings-card">
+                <h3>🔢 Number of Questions</h3>
+                <p>Select how many challenges you want to face in this run.</p>
+                <div class="quiz-param-grid" id="quiz-count-options">
+                    <button class="param-tile active" data-value="1">1</button>
+                    <button class="param-tile" data-value="5">5</button>
+                    <button class="param-tile" data-value="10">10</button>
+                    <button class="param-tile" data-value="15">15</button>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <!-- Re-mapped Challenge Category Selection Grid -->
+				<h3>🗂 Challenge Category</h3>
+				<p>Choose your elemental training topic track.</p>
+				<div id="quiz-category-options" class="quiz-param-grid">
+					<div class="param-tile active" data-value="random">🎲 Random</div>
+					<div class="param-tile" data-value="stem_tech">💻 STEM & Tech</div>
+					<div class="param-tile" data-value="nature_sci">🌿 Nature & Sci</div>
+					<div class="param-tile" data-value="sports_rec">🎮 Sports & Rec</div>
+					<div class="param-tile" data-value="arts_lit">🎭 Arts & Lit</div>
+					<div class="param-tile" data-value="pop_culture">🎬 Pop Culture</div>
+				</div>
+            </div>
+            
+            <button id="start-quiz-battle-btn" class="settings-action-btn feedback-btn">⚔️ Start Challenge</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         ACTIVE QUIZ BATTLE ARENA
+         ========================================== -->
+    <div id="quiz-arena-page" class="settings-view">
+        <div class="pokedex-header-sticky-group">
+            <div class="overview-header">
+                <div class="quiz-arena-meta" id="quiz-difficulty-badge">🏆 Easy</div>
+                <div class="quiz-arena-score" id="quiz-live-score">Score: 0</div>
+            </div>
+            <div class="quiz-progress-track" id="quiz-progress-track"></div>
+        </div>
+        
+        <div class="quiz-arena-body">
+            <div class="quiz-question-card">
+                <h2 id="quiz-question-text">Loading question prompt matrix token data...</h2>
+            </div>
+            
+            <div class="quiz-options-matrix" id="quiz-options-matrix">
+                <button class="option-btn" data-index="0">Option A</button>
+                <button class="option-btn" data-index="1">Option B</button>
+                <button class="option-btn" data-index="2">Option C</button>
+                <button class="option-btn" data-index="3">Option D</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
          CARD VIEWER PAGE
          ========================================== -->
-    <div id="card-viewer" class="card-viewer hidden">
-        <!-- Persistent Header: Stays locked at the top -->
+    <div id="card-viewer" class="card-viewer">
         <div class="overview-header">
             <button id="viewer-home-return-button" class="return-button">
                 <img src="./assets/logos/Poke_Center.png" alt="Home" class="pc-icon-small">
@@ -102,14 +205,11 @@
             </button>
         </div>
         
-        <!-- Persistent Group: Stays locked at the top -->
         <div class="viewer-header-logo-group">
-            <!-- Clickable Collection Logo to go back to overview page -->
             <button id="viewer-return-button" class="return-button">
                 <img id="viewer-logo" class="overview-logo" src="" alt="Collection Logo">
             </button>
             
-            <!-- Three-Way Dropdown view filter toolbar (Text Label Removed) -->
             <div class="viewer-filter-bar">
                 <select id="viewer-filter-select" class="filter-dropdown">
                     <option value="all">📖 Show All Cards</option>
@@ -119,7 +219,6 @@
             </div>
         </div>
         
-        <!-- Scrolling Content Panel: Only the grid and reset button scroll -->
         <div id="viewer-scroll-layer">
             <div id="card-grid" class="card-grid"></div>
             <button id="reset-pokedex-button" class="reset-button">Reset This Collection</button>
@@ -127,10 +226,9 @@
     </div>
 
     <!-- ==========================================
-        MY POKEDEX PAGE
-     ========================================== -->
-    <div id="pokedex" class="pokedex hidden">
-        <!-- Persistent Group Header Container Layer: Stays locked at the top -->
+         MY POKEDEX PAGE
+         ========================================== -->
+    <div id="pokedex" class="pokedex">
         <div class="pokedex-header-sticky-group">
             <div class="overview-header">
                 <button id="pokedex-return-button" class="return-button">
@@ -138,60 +236,88 @@
                     Poké‑Center
                 </button>
                 <img class="pokedex-logo" src="./assets/logos/pokedex.png" alt="Pokedex Logo">
-                <div style="width:75px;"></div> <!-- Balanced layout spacer alignment -->
+                <div style="width:75px;"></div>
             </div>
-            
-            <!-- Locked Subtitle Row added directly below the logo inside the sticky container -->
-            <h2 class="pokedex-view-title">My Pokédex</h2>
+            <h2 class="pokedex-view-title">Pokédex</h2>
+            <p class="pokedex-view-subtitle">MY Collections</p>
         </div>
         
-        <!-- Scrolling Content Panel: Only the grid and reset button scroll -->
         <div id="pokedex-scroll-layer">
             <div id="pokedex-grid" class="pokedex-grid"></div>
-            <button id="reset-pokedex-button" class="reset-button">Reset All Progress</button>
         </div>
     </div>
 
     <!-- ==========================================
          SETTINGS MANAGEMENT PAGE
-         ========================================== -->
+      ========================================== -->
     <div id="settings-page" class="settings-view hidden">
         <div class="overview-header">
-            <button id="settings-return-button" class="return-button"><span>⬅️ Return</span></button>
+			<button id="settings-return-button" class="return-button">
+			<img src="./assets/logos/Poke_Center.png" alt="Home" class="pc-icon-settings"></button>
         </div>
         
-        <h1 class="overview-title">Application Settings</h1>
+        <h3 class="settings-title">Poké-Center Settings</h3>
         
         <div class="settings-container">
-            <!-- 1. FEEDBACK -->
+            <!-- FEEDBACK -->
             <div class="settings-card">
                 <h3>📬 App Feedback</h3>
-                <p>Share your ideas or report bugs via our official feedback channel.</p>
+                <span class="control-sub-desc">Report bugs to Nurse Joy, or tell our Trainers your ideas via our official feedback channel.</span>
                 <a href="https://forms.gle/PAzV3F8mksGG9VSZ8" target="_blank" class="settings-action-btn feedback-btn">Open Google Form</a>
             </div>
+			<!-- Audio Control Row -->
+			<div class="settings-control-row">
+				<div class="control-label-block">
+					<span class="control-main-title">🎵 Audio System Feedback</span>
+					<span class="control-sub-desc">Play catch sound FX notifications instantly.</span>
+				</div>
+				<div class="control-action-block">
+					<label class="theme-toggle-switch">
+						<input type="checkbox" id="settings-sound-toggle">
+						<span class="toggle-slider round"></span>
+					</label>
+				</div>
+			</div>
 
-            <!-- 2. SOUND TOGGLE -->
-            <div class="settings-card">
-                <h3>🎵 Audio Enhancements</h3>
-                <p>Toggle sound effects played during a new card collection sequence.</p>
-                <label class="toggle-control-row">
-                    <input type="checkbox" id="settings-sound-toggle" checked>
-                    <span class="toggle-label-text">Enable Catch Sound FX</span>
-                </label>
-            </div>
+			<!-- Quiz Customizer Settings Layer -->
+			<div class="settings-control-row">
+				<div class="control-label-block">
+					<span class="control-main-title">🏆 Quiz Gauntlet Difficulty</span>
+					<span class="control-sub-desc">Enable Expert Mode to elevate tier challenges.</span>
+				</div>
+				<div class="control-action-block">
+					<label class="theme-toggle-switch">
+						<input type="checkbox" id="settings-quiz-expert-toggle">
+						<span class="toggle-slider round"></span>
+					</label>
+				</div>
+			</div>
 
-            <!-- 3. CONFIG DEFAULT VIEWER FILTER -->
-            <div class="settings-card">
-                <h3>🔍 Default Card Viewer Filter</h3>
-                <p>Choose which card filter applies automatically whenever you open a set collection grid.</p>
+            <!-- CONFIG DEFAULT VIEWER FILTER -->
+			<div class="settings-control-row">
+				<div class="control-label-block">
+					<span class="control-main-title">🔍 Default Card Viewer Filter</span>
+					<span class="control-sub-desc">Choose the default card filter for your Pokédex collection grid.</span>
                 <select id="settings-default-filter" class="settings-dropdown-input">
                     <option value="all">📖 Show All Cards</option>
                     <option value="owned">✅ Owned Cards Only</option>
                     <option value="missing">❌ Missing Cards Only</option>
                 </select>
-            </div>
+				</div>
+			</div>
+            <!-- Rarity Legend -->
+			<div class="settings-control-row">
+				<div class="control-label-block">
+					<span class="control-main-title">👁️ View Rarity Icons</span>
+				</div>
+				<div class="control-action-block">
+					<!-- 🛠 FIX: Change the id text value and assign a clean action-button utility class -->
+					<button id="legend-open-btn" class="settings-action-btn legend-btn">View Legend</button>
+				</div>
+			</div>
+			<div>
 
-            <!-- 4. BACKUP & RESTORE -->
+            <!-- BACKUP & RESTORE -->
             <div class="settings-card">
                 <h3>💾 Backup & Restore Progress</h3>
                 <p>Copy your save database text block to move your binder metrics to another phone or device.</p>
@@ -201,52 +327,32 @@
                     <button id="settings-import-btn" class="settings-action-btn import-btn">📥 Import Data</button>
                 </div>
             </div>
-			<!-- 5. Rarity Icon Legend -->
-			<div class="settings-card">
-				<h3>📖 Rarity Icon Legend</h3>
-			<div class="legend-scroll-box">
-				<table class="legend-table">
-					<thead>
-						<tr>
-							<th>Symbol</th>
-							<th>Rarity Name</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr><td>⚫</td><td>**Common**</td></tr>
-						<tr><td>♦️</td><td>**Uncommon**</td></tr>
-						<tr><td>⭐</td><td>**Rare**</td></tr>
-						<tr><td>⭐⭐</td><td>**Double Rare**</td></tr>
-						<tr><td>💎</td><td>**Ultra Rare**</td></tr>
-						<tr><td>🪙</td><td>**Classic Collection**</td></tr>
-						<tr><td>🖌️</td><td>**Illustration Rare**</td></tr>
-						<tr><td>🖌️🎨</td><td>**Special Illustration Rare**</td></tr>
-						<tr><td>✨</td><td>**Shiny Rare**</td></tr>
-						<tr><td>✨✨</td><td>**Shiny Ultra Rare**</td></tr>
-						<tr><td>⚡</td><td>**Mega Attack Rare**</td></tr>
-						<tr><td>🔥</td><td>**Hyper Rare**</td></tr>
-						<tr><td>⚡🔥</td><td>**Mega Hyper Rare**</td></tr>
-						<tr><td>🐭⚡</td><td>**Pikachu Rare**</td></tr>
-						<tr><td>⚛️</td><td>**Futuristic Rare**</td></tr>
-						<tr><td>⚫⚪</td><td>**Black White Rare**</td></tr>
-						<tr><td>🛡️</td><td>**ACE SPEC Rare**</td></tr>
-					</tbody>
-				</table>
+            <!-- GLOBAL FACTORY RESET -->
+				<div class="settings-card danger-zone">
+					<h3>⚠️ Global Factory Reset</h3>
+					<p>Permanently remove your collection history data logs. This instantly zeros out every binder card tracked.</p>
+					<button id="reset-all-button" class="settings-action-btn reset-all-btn">Reset All Progress</button>
+				</div>
 			</div>
 		</div>
-
-            <!-- 6. GLOBAL FACTORY RESET -->
-            <div class="settings-card danger-zone">
-                <h3>⚠️ Global Factory Reset</h3>
-                <p>Permanently remove your collection history data logs. This instantly zeros out every binder card tracked.</p>
-                <button id="reset-all-button" class="settings-action-btn reset-all-btn">Reset All Progress</button>
-            </div>
-        </div>
-    </div>
+	</div>
+			<!-- Full Screen Legend Overlay Screen Container -->
+			<div id="rarity-legend-page" style="display: none;">
+				<div class="legend-nav-header">
+					<button id="legend-close-btn" class="return-button">← Return to Settings</button>
+					<h2>Rarity Icon Legend</h2>
+				</div>
+	
+				<div class="legend-scroll-frame">
+					<div id="legend-matrix-grid">
+						<!-- JavaScript dynamically injects elements into this row grid framework -->
+					</div>
+				</div>
+			</div>
 
     <!-- ==========================================
          CARD DETAIL MODAL INTERACTIVE POPUP
-         ========================================== -->
+     ========================================== -->
     <div id="card-modal" class="card-modal hidden">
         <div class="card-modal-content">
             <div class="modal-close-bar">

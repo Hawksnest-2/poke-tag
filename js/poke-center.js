@@ -11,6 +11,7 @@ Features
 • Card Modal
 • My Pokedex
 • Local Storage Progress Tracking
+• Gym Challenge Quiz Engine (Gauntlet Architecture)
 
 ******************************************************************************/
 /******************************************************************************
@@ -18,6 +19,8 @@ IMPORTS
 ******************************************************************************/
 import { collections } from "./manifest.js";
 import { rarityLegend } from "./rarity.js";
+import { quizQuestions } from "./quizQuestions.js";
+
 
 /******************************************************************************
 RARITY CONFIGURATION
@@ -56,33 +59,38 @@ let startY = 0;
 let isDragging = false;
 let isSoundEnabled = true;
 let defaultViewerFilter = "all";
+let isExpertQuizMode = false;
 
 /******************************************************************************
 DOM REFERENCES
 ******************************************************************************/
-/* New Settings DOM Reference Hooks */
+/* Settings Page Panel Components */
 const settingsPage = document.getElementById("settings-page");
 const settingsOpenBtn = document.getElementById("settings-open-btn");
 const settingsReturnButton = document.getElementById("settings-return-button");
 const settingsSoundToggle = document.getElementById("settings-sound-toggle");
+const settingsQuizExpertToggle = document.getElementById("settings-quiz-expert-toggle");
 const settingsBackupBox = document.getElementById("settings-backup-box");
 const settingsCopyBtn = document.getElementById("settings-copy-btn");
 const settingsImportBtn = document.getElementById("settings-import-btn");
 const resetAllButton = document.getElementById("reset-all-button");
 const settingsDefaultFilter = document.getElementById("settings-default-filter");
-/* Home */
+/* Legend Modal References */
+const rarityLegendPage = document.getElementById("rarity-legend-page");
+const legendOpenBtn = document.getElementById("legend-open-btn");
+const legendCloseBtn = document.getElementById("legend-close-btn");
+const legendMatrixGrid = document.getElementById("legend-matrix-grid");
+/* Home View Screen Hooks */
 const mainHeader = document.getElementById("main-header");
 const collectionSelector = document.getElementById("collection-selector");
 const myPokedexButtonHome = document.getElementById("home-pokedex-button");
-/* Collection Overview */
+/* Collection Overview Components */
 const collectionOverview = document.getElementById("collection-overview");
 const overviewTotal = document.getElementById("overview-total");
-const overviewStatsTitle = document.getElementById("overview-stats-title");
-const overviewCatchTitle = document.getElementById("overview-catch-title");
 const overviewReturnButton = document.getElementById("overview-return-button");
 const overviewPokedexButton = document.getElementById("overview-pokedex-button");
 const catchOpenImageOverview = document.getElementById("catch-open-image");
-/* Rarity */
+/* Rarity Trackers */
 const rarityCommonIcon = document.getElementById("rarity-common-icon");
 const rarityUncommonIcon = document.getElementById("rarity-uncommon-icon");
 const rarityRareIcon = document.getElementById("rarity-rare-icon");
@@ -92,18 +100,18 @@ const rarityRareFill = document.getElementById("rarity-rare-fill");
 const rarityCommonText = document.getElementById("rarity-common-text");
 const rarityUncommonText = document.getElementById("rarity-uncommon-text");
 const rarityRareText = document.getElementById("rarity-rare-text");
-/* Card Viewer */
+/* Card Grid Viewer Layer */
 const cardViewer = document.getElementById("card-viewer");
 const viewerReturnButton = document.getElementById("viewer-return-button");
 const viewerHomeReturnButton = document.getElementById("viewer-home-return-button");
 const viewerPokedexButton = document.getElementById("viewer-pokedex-button");
 const cardGrid = document.getElementById("card-grid");
 const viewerFilterSelect = document.getElementById("viewer-filter-select");
-/* My Pokedex */
+/* Global Binder Profile */
 const pokedexPage = document.getElementById("pokedex");
 const pokedexReturnButton = document.getElementById("pokedex-return-button");
 const pokedexGrid = document.getElementById("pokedex-grid");
-/* Card Modal */
+/* Detailed Inspection Modal Overlay */
 const cardModal = document.getElementById("card-modal");
 const modalImage = document.getElementById("modal-image");
 const modalNumber = document.getElementById("modal-number");
@@ -156,57 +164,76 @@ function saveOwnedCards() {
 }
 
 function loadOwnedCards() {
+    // 1. Audio Driver Configuration Loader
     const soundPref = localStorage.getItem("audioMutePreference");
     if (soundPref !== null) {
         isSoundEnabled = soundPref === "true";
         if (settingsSoundToggle) settingsSoundToggle.checked = isSoundEnabled;
     }
+
+    // 2. Collection Progress Profile Parser
     const raw = localStorage.getItem("ownedCards");
-    if (!raw) return;
-    try {
-        const obj = JSON.parse(raw);
-        ownedCards.clear();
-        for (const [key, value] of Object.entries(obj)) { ownedCards.set(key, value); }
-    } catch (e) {
-        console.error("Failed to load ownedCards:", e);
+    if (raw) {
+        try {
+            const obj = JSON.parse(raw);
+            ownedCards.clear();
+            for (const [key, value] of Object.entries(obj)) { 
+                ownedCards.set(key, value); 
+            }
+        } catch (e) {
+            console.error("Failed to parse ownedCards tracker loop data profile:", e);
+        }
     }
-	// Append this inside loadOwnedCards() right alongside the sound preference loader block
+
+    // 3. Grid Filters Settings Recall Layout
     const savedFilterPref = localStorage.getItem("defaultViewerFilterPreference");
     if (savedFilterPref !== null) {
         defaultViewerFilter = savedFilterPref;
-    if (settingsDefaultFilter) settingsDefaultFilter.value = defaultViewerFilter;
+        if (settingsDefaultFilter) {
+            settingsDefaultFilter.value = defaultViewerFilter;
+        }
+    }
+
+    // 4. Quiz Expert Mode State Config Sync
+    const savedExpertMode = localStorage.getItem("expertQuizModePreference");
+    if (savedExpertMode !== null) {
+        isExpertQuizMode = savedExpertMode === "true";
+        if (settingsQuizExpertToggle) settingsQuizExpertToggle.checked = isExpertQuizMode;
     }
 }
 
-/*************************************************
-DIAGNOSTIC SCREEN MANAGEMENT
-*************************************************/
+/******************************************************************************
+SCREEN MANAGEMENT
+******************************************************************************/
 function showScreen(screen) {
-    // 1. Target by known screen layout class names to ensure we hit everything uniformly
-    const classesToHide = [
-        "main-header", 
-        "collection-selector", 
-        "collection-overview", 
-        "card-viewer", 
-        "pokedex", 
-        "settings-view"
-    ];
+    const homeHeader = document.getElementById("main-header");
+    const collectionSelector = document.getElementById("collection-selector");
+    const overviewPage = document.getElementById("collection-overview");
+    const viewerPage = document.getElementById("card-viewer");
+    const dexPage = document.getElementById("pokedex");
+    const settingsPanel = document.getElementById("settings-page");
+    const quizSetupPanel = document.getElementById("quiz-setup-page");
+    const quizArenaPanel = document.getElementById("quiz-arena-page");
 
-    classesToHide.forEach(className => {
-        const elements = document.getElementsByClassName(className);
-        for (let i = 0; i < elements.length; i++) {
-            elements[i].classList.add("hidden");
-        }
-    });
+    // Clear active displays across all panels uniformly
+    if (homeHeader) homeHeader.style.display = "none";
+    if (collectionSelector) collectionSelector.style.display = "none";
+    if (overviewPage) overviewPage.style.display = "none";
+    if (viewerPage) viewerPage.style.display = "none";
+    if (dexPage) dexPage.style.display = "none";
+    if (settingsPanel) settingsPanel.style.display = "none";
+    if (quizSetupPanel) quizSetupPanel.style.display = "none";
+    if (quizArenaPanel) quizArenaPanel.style.display = "none";
+    if (rarityLegendPage) rarityLegendPage.style.display = "none";
 
-    // Also hide explicitly targeted unique IDs safely
-    const idsToHide = ["main-header", "collection-selector", "collection-overview", "card-viewer", "pokedex", "settings-page"];
-    idsToHide.forEach(id => {
+    // Clean up residual hidden framework flags
+    const legacyScreens = ["main-header", "collection-selector", "collection-overview", "card-viewer", "pokedex", "settings-page", "quiz-setup-page", "quiz-arena-page", "rarity-legend-page"];
+    legacyScreens.forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.classList.add("hidden");
+        if (el) el.classList.remove("hidden");
     });
 
-    // 2. Clear scrolling view layers
+    // Handle view scroll resets to clear view layout shifting properties
     setTimeout(() => {
         window.scrollTo(0, 0);
         if (document.body) document.body.scrollTop = 0;
@@ -218,39 +245,37 @@ function showScreen(screen) {
         });
     }, 10);
 
-    // 3. Reveal screens by testing BOTH their direct literal IDs and structural layout tags
+    // Direct interface inline routing engine assignments
     switch (screen) {
         case "home":
-            // Home needs both the header block and selector block visible
-            const header = document.getElementById("main-header") || document.querySelector(".main-header");
-            const selector = document.getElementById("collection-selector") || document.querySelector(".collection-selector");
-            if (header) header.classList.remove("hidden");
-            if (selector) selector.classList.remove("hidden");
+            if (homeHeader) homeHeader.style.display = "flex";
+            if (collectionSelector) collectionSelector.style.display = "grid";
             break;
-            
         case "overview":
-            const overview = document.getElementById("collection-overview") || document.querySelector(".collection-overview");
-            if (overview) overview.classList.remove("hidden");
+            if (overviewPage) overviewPage.style.display = "flex";
             break;
-            
         case "viewer":
-            const viewer = document.getElementById("card-viewer") || document.querySelector(".card-viewer");
-            if (viewer) viewer.classList.remove("hidden");
+            if (viewerPage) viewerPage.style.display = "flex";
             break;
-            
         case "pokedex":
-            const dex = document.getElementById("pokedex") || document.querySelector(".pokedex");
-            if (dex) dex.classList.remove("hidden");
+            if (dexPage) dexPage.style.display = "flex";
             break;
-            
         case "settings":
             generateBackupStringKey();
-            const settings = document.getElementById("settings-page") || document.querySelector(".settings-view");
-            if (settings) settings.classList.remove("hidden");
+            if (settingsPanel) settingsPanel.style.display = "flex";
+            break;
+        case "quiz-setup":
+            if (quizSetupPanel) quizSetupPanel.style.display = "flex";
+            break;
+        case "quiz-arena":
+            if (quizArenaPanel) quizArenaPanel.style.display = "flex";
+            break;
+        case "rarity-legend":
+            renderRarityLegendGrid();
+            if (rarityLegendPage) rarityLegendPage.style.display = "flex";
             break;
     }
 }
-
 
 /******************************************************************************
 MODAL HELPER
@@ -296,7 +321,7 @@ function renderCollectionSelector() {
         const img = document.createElement("img");
         img.className = "collection-logo";
         img.src = `./assets/logos/${col.logo}`;
-        const name = document.createElement("span"); // Fixed typo here
+        const name = document.createElement("span");
         name.className = "collection-name";
         name.textContent = col.name;
         tile.appendChild(img);
@@ -335,8 +360,6 @@ async function enterCollectionOverview(collectionId) {
             }
         }
     });
-    overviewStatsTitle.textContent = "Your " + collectionMeta.name + " Collection Statistics";
-    overviewCatchTitle.textContent = "Catch a " + collectionMeta.name + " Pokémon!!!";
     overviewTotal.textContent = "Owned: " + ownedCount + " / " + totalCards + " cards";
     rarityCommonIcon.textContent = rarityConfig.common.icon;
     rarityUncommonIcon.textContent = rarityConfig.uncommon.icon;
@@ -361,7 +384,6 @@ function renderCardViewer() {
     document.getElementById("viewer-scroll-layer").scrollTop = 0;
     showScreen("viewer");
     
-    // SAFE CHECK: Only update the dropdown if it successfully exists in your HTML DOM
     if (viewerFilterSelect) {
         viewerFilterSelect.value = defaultViewerFilter;
     }
@@ -377,21 +399,18 @@ function renderCardViewer() {
     executeFilteredGridRender();
 }
 
-/* Updated helper engine function with strict safety boundaries */
 function executeFilteredGridRender() {
     if (!cardGrid || !currentCollectionData) return;
     cardGrid.innerHTML = "";
     
-    // SAFE CHECK: Fallback safely to "all" if the element layout isn't found
     const activeFilter = viewerFilterSelect ? viewerFilterSelect.value : "all";
 
     currentCollectionData.forEach(card => {
         const key = `${currentCollectionId}:${card.cardNumber}`;
         const isOwned = ownedCards.get(key) === true;
         
-        // 3-WAY FILTER EVALUATION LAYER CHECKPOINTS
-        if (activeFilter === "owned" && !isOwned) return;     // Skip rendering if we only want owned cards
-        if (activeFilter === "missing" && isOwned) return;    // Skip rendering if we only want missing cards
+        if (activeFilter === "owned" && !isOwned) return;
+        if (activeFilter === "missing" && isOwned) return;
 
         const tile = document.createElement("div");
         tile.className = "card-tile";
@@ -461,7 +480,6 @@ function resetCurrentCollection() {
     renderCardViewer();
 }
 
-
 /******************************************************************************
 CATCH LOGIC
 ******************************************************************************/
@@ -477,16 +495,13 @@ function catchRandomPokemon() {
         ownedCards.set(key, true);
         saveOwnedCards();
         
-        // FORTIFIED AUDIO DRIVER LAYERS
-			// CHECK MUTE FLAG PRIOR TO LAUNCHING ENGINE FILES
 		if (isSoundEnabled) {
 			const catchAudio = document.getElementById("catch-sound");
 			if (catchAudio) {
-				catchAudio.currentTime = 0; // Rewinds to the beginning so it triggers instantly on fast clicks
+				catchAudio.currentTime = 0;
 				catchAudio.play().catch(e => console.log("Audio playback blocked:", e));
 			}
 		}
-
     }
 
     const imgSrc = `./collections/${currentCollectionId}/${randomCard.file}`;
@@ -530,7 +545,7 @@ async function renderPokedexPage() {
         const data = await loadCollectionData(col.id);
         let ownedCount = 0;
         for (const card of data) {
-            const key = `${col.id}:${card.cardNumber}`;
+			const key = `${col.id}:${card.cardNumber}`;
             if (ownedCards.get(key) === true) {
                 ownedCount++;
             }
@@ -598,13 +613,12 @@ if (viewerPokedexButton) {
         showScreen("pokedex");
     });
 }
-/* My Pokedex */
+/* My Pokedex Layout Actions */
 if (pokedexReturnButton) {
     pokedexReturnButton.addEventListener("click", () => {
         showScreen("home");
     });
 }
-/* My Pokedex Page View Button - Wrapped in safe check to prevent line 583 crash */
 const pokedexViewButton = document.getElementById("pokedex-view-button");
 if (pokedexViewButton) {
     pokedexViewButton.addEventListener("click", () => {
@@ -612,7 +626,7 @@ if (pokedexViewButton) {
         showScreen("pokedex");
     });
 }
-/* Modal */
+/* Card Viewer Lightbox Close Hooks */
 if (modalClose) {
     modalClose.addEventListener("click", () => {
         closeCardModal();
@@ -620,7 +634,6 @@ if (modalClose) {
             pendingCatchRefresh = false;
             renderCardViewer();
             
-            // CRITICAL FIX: Forces the viewer panel to the top right after catching a card
             const viewerScroll = document.getElementById("viewer-scroll-layer");
             if (viewerScroll) {
                 viewerScroll.scrollTop = 0;
@@ -629,17 +642,30 @@ if (modalClose) {
     });
 }
 
-/* Catch Button */
+/* Direct Catch Pack Launcher Trigger */
 if (catchOpenImageOverview) {
     catchOpenImageOverview.addEventListener("click", catchRandomPokemon);
 }
-/* Reset Button */
+
+/* Direct Portal Transition to Quiz Arena Layout Options */
+const overviewStartQuizBtn = document.getElementById("overview-start-quiz-btn");
+if (overviewStartQuizBtn) {
+    overviewStartQuizBtn.addEventListener("click", () => {
+        showScreen("quiz-setup");
+    });
+}
+
+/* System Control Management Sub-panel Handlers */
+if (settingsQuizExpertToggle) {
+    settingsQuizExpertToggle.addEventListener("change", (e) => {
+        isExpertQuizMode = e.target.checked;
+        localStorage.setItem("expertQuizModePreference", isExpertQuizMode);
+    });
+}
 const resetPokedexButton = document.getElementById("reset-pokedex-button");
 if (resetPokedexButton) {
     resetPokedexButton.addEventListener("click", resetCurrentCollection);
 }
-
-/* Settings Management Event Bindings */
 if (settingsOpenBtn) {
     settingsOpenBtn.addEventListener("click", () => showScreen("settings"));
 }
@@ -668,31 +694,82 @@ if (settingsImportBtn) {
 if (resetAllButton) {
     resetAllButton.addEventListener("click", resetAllCollectionsGlobally);
 }
-/* Dropdown Live Filter Changes inside Card Viewer */
 if (viewerFilterSelect) {
     viewerFilterSelect.addEventListener("change", executeFilteredGridRender);
 }
-/* Default Configuration Changes inside Settings Tab Menu */
 if (settingsDefaultFilter) {
     settingsDefaultFilter.addEventListener("change", (e) => {
         defaultViewerFilter = e.target.value;
         localStorage.setItem("defaultViewerFilterPreference", defaultViewerFilter);
     });
 }
+const quizSetupReturnBtn = document.getElementById("quiz-setup-return-btn");
+if (quizSetupReturnBtn) {
+    quizSetupReturnBtn.addEventListener("click", () => {
+        showScreen("overview");
+    });
+}
+
+/* Rarity Legend Open/Close Listeners */
+if (legendOpenBtn) {
+    legendOpenBtn.addEventListener("click", () => showScreen("rarity-legend"));
+}
+if (legendCloseBtn) {
+    legendCloseBtn.addEventListener("click", () => showScreen("settings"));
+}
+
+/* 2x2 Arena Gauntlet Mode Listeners */
+const gauntletButtons = document.querySelectorAll(".quiz-gauntlet-grid .gym-portal-btn");
+gauntletButtons.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        const selectedTier = e.currentTarget.getAttribute("data-tier");
+        
+        if (selectedTier === "easy") {
+            const countChoice = prompt("Select Poké Ball Question Count:\nType '3' or '5'", "3");
+            if (countChoice === "3" || countChoice === "5") {
+                buildAdvancedMixPlaylist("easy", parseInt(countChoice));
+            } else {
+                alert("Invalid selection. Challenge aborted.");
+            }
+        } 
+        else if (selectedTier === "medium") {
+            const countChoice = prompt("Select Great Ball Question Count:\nType '5' or '10'", "5");
+            if (countChoice === "5" || countChoice === "10") {
+                buildAdvancedMixPlaylist("medium", parseInt(countChoice));
+            } else {
+                alert("Invalid selection. Challenge aborted.");
+            }
+        }
+        else if (selectedTier === "hard") {
+            const countChoice = prompt("Select Ultra Ball Question Count:\nType '5' or '10'", "5");
+            if (countChoice === "5" || countChoice === "10") {
+                buildAdvancedMixPlaylist("hard", parseInt(countChoice));
+            } else {
+                alert("Invalid selection. Challenge aborted.");
+            }
+        }
+        else if (selectedTier === "expert") {
+            const countChoice = prompt("Select Master Ball Question Count:\nType '10' or '15'", "10");
+            if (countChoice === "10" || countChoice === "15") {
+                buildAdvancedMixPlaylist("expert", parseInt(countChoice));
+            } else {
+                alert("Invalid selection. Challenge aborted.");
+            }
+        }
+    });
+});
+
 
 /******************************************************************************
 PINCH ZOOM & MULTI-TOUCH PANNING ENGINE
 ******************************************************************************/
 if (modalImage) {
-    // Phase 1: Touch Init Point Capture
     modalImage.addEventListener("touchstart", e => {
         if (e.touches.length === 1) {
-            // SINGLE TOUCH: Start panning drag vector tracking
             isDragging = true;
             startX = e.touches[0].pageX - currentX;
             startY = e.touches[0].pageY - currentY;
         } else if (e.touches.length === 2) {
-            // MULTI-TOUCH: Start scale calculation mode
             isDragging = false;
             const dx = e.touches[0].pageX - e.touches[1].pageX;
             const dy = e.touches[0].pageY - e.touches[1].pageY;
@@ -700,50 +777,41 @@ if (modalImage) {
         }
     });
 
-    // Phase 2: Live Motion Transform Engine
     modalImage.addEventListener("touchmove", e => {
-        // Prevent default browser viewport rubber-banding while zooming/panning
         e.preventDefault(); 
 
         if (e.touches.length === 1 && isDragging) {
-            // SINGLE TOUCH ACTION: Pan card image matching finger vector offsets
             currentX = e.touches[0].pageX - startX;
             currentY = e.touches[0].pageY - startY;
-            
-            // Constrain scrolling leak boundaries if user zooms back out to normal scale
             if (scale <= 1) {
                 currentX = 0;
                 currentY = 0;
             }
-            
             modalImage.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
         } else if (e.touches.length === 2) {
-            // MULTI-TOUCH ACTION: Calculate live pinch/spread zoom levels
-            const [t1, t2] = e.touches;
-            const dx = t1.pageX - t2.pageX;
-            const dy = t1.pageY - t2.pageY;
+            const dx = e.touches[0].pageX - e.touches[1].pageX;
+            const dy = e.touches[0].pageY - e.touches[1].pageY;
             const distance = Math.sqrt(dx * dx + dy * dy);
-            
             if (!startDistance) startDistance = distance;
-            
-            // Constrain zoom levels safely between 1x flat and 4x close-up magnification
             scale = Math.min(4, Math.max(1, distance / startDistance));
-            
             modalImage.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
         }
     }, { passive: false });
 
-    // Phase 3: Gesture End State Preservation
     modalImage.addEventListener("touchend", e => {
         startDistance = 0;
-        isDragging = false;
-        
-        // If user zooms all the way back out, snap card position cleanly back to center layout
-        if (scale <= 1) {
-            scale = 1;
-            currentX = 0;
-            currentY = 0;
-            modalImage.style.transform = `translate(0px, 0px) scale(1)`;
+        if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].pageX - currentX;
+            startY = e.touches[0].pageY - currentY;
+        } else if (e.touches.length === 0) {
+            isDragging = false;
+            if (scale <= 1) {
+                scale = 1;
+                currentX = 0;
+                currentY = 0;
+                modalImage.style.transform = `translate(0px, 0px) scale(1)`;
+            }
         }
     });
 }
@@ -759,7 +827,6 @@ function closeCardModal() {
     if (cardModal) cardModal.classList.add("hidden");
     if (modalImage) modalImage.style.transform = "";
     
-    // RESET ZOOM & DRAG VECTORS COMPLETELY ON CLOSE
     scale = 1;
     startDistance = 0;
     currentX = 0;
@@ -774,3 +841,235 @@ function closeCardModal() {
     if (catchStatus) catchStatus.textContent = "";
     if (collectCount) collectCount.textContent = "";
 }
+
+/******************************************************************************
+MODULE IMPLEMENTATION: GYM CHALLENGE QUIZ ENGINE
+******************************************************************************/
+let quizPlaylist = [];
+let quizCurrentIndex = 0;
+let quizScore = 0;
+let rewardQueueCount = 0;
+
+/* Rarity Legend Grid Injection Renderer */
+function renderRarityLegendGrid() {
+    // 🛡️ Fail-Safe: If the container isn't found in your HTML, abort before rendering breaks
+    if (!legendMatrixGrid) {
+        console.error("Error: #legend-matrix-grid element was not found in the HTML markup.");
+        showScreen("settings"); // Force safely return to the settings panel
+        return;
+    }
+    
+    legendMatrixGrid.innerHTML = "";
+    
+    for (const [name, icon] of Object.entries(rarityLegend)) {
+        const tile = document.createElement("div");
+        tile.className = "legend-row-tile";
+        
+        const symbol = document.createElement("span");
+        symbol.className = "legend-tile-icon";
+        symbol.textContent = icon;
+        
+        const label = document.createElement("span");
+        label.className = "legend-tile-text";
+        label.textContent = name;
+        
+        tile.appendChild(symbol);
+        tile.appendChild(label);
+        legendMatrixGrid.appendChild(tile);
+    }
+}
+
+
+/* High-Yield Algorithmic Gauntlet Generation Loop Engine */
+function buildAdvancedMixPlaylist(tier, totalCount) {
+    let primaryPool = [];
+    let secondaryPool = [];
+    let primaryTargetCount = 0;
+    let secondaryTargetCount = 0;
+
+    if (tier === "easy") {
+        primaryPool = quizQuestions.filter(q => q.difficulty === "easy");
+        primaryTargetCount = totalCount;
+    } 
+    else if (tier === "medium") {
+        if (!isExpertQuizMode) {
+            primaryPool = quizQuestions.filter(q => q.difficulty === "medium");
+            secondaryPool = quizQuestions.filter(q => q.difficulty === "hard");
+        } else {
+            primaryPool = quizQuestions.filter(q => q.difficulty === "hard");
+            secondaryPool = quizQuestions.filter(q => q.difficulty === "expert");
+        }
+        primaryTargetCount = (totalCount === 5) ? 4 : 8;
+        secondaryTargetCount = (totalCount === 5) ? 1 : 2;
+    }
+    else if (tier === "hard") {
+        if (!isExpertQuizMode) {
+            primaryPool = quizQuestions.filter(q => q.difficulty === "medium");
+            secondaryPool = quizQuestions.filter(q => q.difficulty === "hard");
+            primaryTargetCount = (totalCount === 5) ? 2 : 4;
+            secondaryTargetCount = (totalCount === 5) ? 3 : 6;
+        } else {
+            primaryPool = quizQuestions.filter(q => q.difficulty === "hard");
+            secondaryPool = quizQuestions.filter(q => q.difficulty === "expert");
+            primaryTargetCount = (totalCount === 5) ? 2 : 4;
+            secondaryTargetCount = (totalCount === 5) ? 3 : 6;
+        }
+    }
+    else if (tier === "expert") {
+        if (!isExpertQuizMode) {
+            primaryPool = quizQuestions.filter(q => q.difficulty === "hard");
+            secondaryPool = quizQuestions.filter(q => q.difficulty === "expert");
+            primaryTargetCount = (totalCount === 10) ? 5 : 9;
+            secondaryTargetCount = (totalCount === 10) ? 5 : 6;
+        } else {
+            primaryPool = quizQuestions.filter(q => q.difficulty === "expert");
+            primaryTargetCount = totalCount;
+        }
+    }
+
+    if (primaryPool.length < primaryTargetCount || (secondaryTargetCount > 0 && secondaryPool.length < secondaryTargetCount)) {
+        alert("CRITICAL ERROR: Insufficient questions inside database matrices to compile this gauntlet split distribution!");
+        return;
+    }
+
+    function shuffleAndSlicePool(sourceArray, quantity) {
+        let cloned = [...sourceArray];
+        for (let i = cloned.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
+        }
+        return cloned.slice(0, quantity);
+    }
+
+    const primarySelection = shuffleAndSlicePool(primaryPool, primaryTargetCount);
+    const secondarySelection = secondaryTargetCount > 0 ? shuffleAndSlicePool(secondaryPool, secondaryTargetCount) : [];
+    
+    let combinedPlaylist = [...primarySelection, ...secondarySelection];
+
+    for (let i = combinedPlaylist.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [combinedPlaylist[i], combinedPlaylist[j]] = [combinedPlaylist[j], combinedPlaylist[i]];
+    }
+
+    quizPlaylist = combinedPlaylist;
+    quizCurrentIndex = 0;
+    quizScore = 0;
+
+    const badge = document.getElementById("quiz-difficulty-badge");
+    if (badge) {
+        badge.textContent = `🏆 ${tier.toUpperCase()} CHALLENGE ${isExpertQuizMode ? '(EXPERT)' : ''}`;
+    }
+
+    showScreen("quiz-arena");
+    renderActiveQuizQuestionCard();
+}
+
+/* Render Active Question Card and Button Options Matrix */
+function renderActiveQuizQuestionCard() {
+    if (quizCurrentIndex >= quizPlaylist.length) {
+        evaluateQuizEndRewards();
+        return;
+    }
+
+    const currentQuestion = quizPlaylist[quizCurrentIndex];
+    
+    const scoreEl = document.getElementById("quiz-live-score");
+    const questionTextEl = document.getElementById("quiz-question-text");
+    if (scoreEl) scoreEl.textContent = `Score: ${quizScore}`;
+    if (questionTextEl) questionTextEl.textContent = currentQuestion.question;
+
+    const trackEl = document.getElementById("quiz-progress-track");
+    if (trackEl) {
+        trackEl.innerHTML = "";
+        for (let i = 0; i < quizPlaylist.length; i++) {
+            const step = document.createElement("span");
+            if (i < quizCurrentIndex) {
+                step.textContent = "⚫";
+            } else if (i === quizCurrentIndex) {
+                step.textContent = "🟡";
+            } else {
+                step.textContent = "⚪";
+            }
+            trackEl.appendChild(step);
+        }
+    }
+
+    const optionButtons = document.querySelectorAll("#quiz-options-matrix .option-btn");
+    optionButtons.forEach((btn, index) => {
+        btn.textContent = currentQuestion.options[index] || "";
+        btn.style.borderColor = "#444";
+        btn.style.background = "#1a1a1a";
+        btn.disabled = false;
+    });
+}
+
+/* Process Answer Choice Indices Click Events */
+function handleOptionChoiceClick(selectedIndex) {
+    const currentQuestion = quizPlaylist[quizCurrentIndex];
+    const optionButtons = document.querySelectorAll("#quiz-options-matrix .option-btn");
+    
+    optionButtons.forEach(btn => btn.disabled = true);
+
+    const isCorrect = selectedIndex === currentQuestion.correctIndex;
+    if (isCorrect) {
+        quizScore++;
+        optionButtons[selectedIndex].style.background = "#2e7d32";
+        optionButtons[selectedIndex].style.borderColor = "#4caf50";
+    } else {
+        optionButtons[selectedIndex].style.background = "#c62828";
+        optionButtons[selectedIndex].style.borderColor = "#ef5350";
+        optionButtons[currentQuestion.correctIndex].style.background = "#2e7d32";
+    }
+
+    setTimeout(() => {
+        quizCurrentIndex++;
+        renderActiveQuizQuestionCard();
+    }, 1200);
+}
+
+/* Evaluate score and queue sequential card draws */
+function evaluateQuizEndRewards() {
+    alert(`Challenge Complete!\n\nYou scored ${quizScore} out of ${quizPlaylist.length} correct!`);
+    
+    if (quizScore === 0) {
+        alert("No rewards earned this run. Keep training and try again!");
+        showScreen("overview");
+        return;
+    }
+
+    rewardQueueCount = quizScore;
+    executeSequentialRewardDraw();
+}
+
+/* Custom interactive reward opening waterfall flow loop matrix */
+function executeSequentialRewardDraw() {
+    if (rewardQueueCount <= 0) {
+        showScreen("overview");
+        enterCollectionOverview(currentCollectionId);
+        return;
+    }
+
+    rewardQueueCount--;
+    catchRandomPokemon();
+
+    const originalModalClose = document.getElementById("modal-close");
+    if (originalModalClose) {
+        const newCloseBtn = originalModalClose.cloneNode(true);
+        originalModalClose.parentNode.replaceChild(newCloseBtn, originalModalClose);
+        
+        newCloseBtn.addEventListener("click", () => {
+            const cardModalEl = document.getElementById("card-modal");
+            if (cardModalEl) cardModalEl.classList.add("hidden");
+            executeSequentialRewardDraw();
+        });
+    }
+}
+
+// Attach event options index event parameters
+const optionButtons = document.querySelectorAll("#quiz-options-matrix .option-btn");
+optionButtons.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        const idx = parseInt(e.target.getAttribute("data-value") || e.target.getAttribute("data-index"));
+        handleOptionChoiceClick(idx);
+    });
+});
