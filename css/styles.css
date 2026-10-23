@@ -220,22 +220,17 @@ Purpose:
     flex-direction: column;
     align-items: center;
     text-align: center;
-
     gap: 8px;
-
-    width: 100vw;
+    width: 100%; /* Changed from 100vw to prevent horizontal scrollbars */
     height: 100dvh;
-
     box-sizing: border-box;
     padding-top: 10px;
-
     background-color: #0f0f0f;
-
     position: fixed;
     top: 0;
     left: 0;
-
-    overflow: hidden;
+    overflow-y: hidden; /* Separates behaviors */
+    overflow-x: hidden; /* Added to freeze all left/right shifting completely */
 }
 
 
