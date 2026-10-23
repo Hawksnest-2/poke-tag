@@ -1,0 +1,17 @@
+{
+  "short_name": "Poké-Center",
+  "name": "Poké-Center Collection Manager",
+  "icons": [
+    {
+      "src": "assets/logos/home-logo.png",
+      "type": "image/png",
+      "sizes": "892x892",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "display": "standalone",
+  "orientation": "portrait"
+}
