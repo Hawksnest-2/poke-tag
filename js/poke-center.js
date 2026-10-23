@@ -972,7 +972,24 @@ function renderActiveQuizQuestionCard() {
     }
 
     const currentQuestion = quizPlaylist[quizCurrentIndex];
-    
+	// Build answer objects preserving original index
+	const shuffledOptions = currentQuestion.options.map((text, index) => ({
+		text,
+		originalIndex: index
+	}));
+
+	// Fisher-Yates shuffle
+	for (let i = shuffledOptions.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffledOptions[i], shuffledOptions[j]] =
+			[shuffledOptions[j], shuffledOptions[i]];
+	}
+
+	// Find where the correct answer moved
+	currentQuestion.shuffledCorrectIndex =
+		shuffledOptions.findIndex(
+			option => option.originalIndex === currentQuestion.correctIndex
+		);   
     const scoreEl = document.getElementById("quiz-live-score");
     const questionTextEl = document.getElementById("quiz-question-text");
     if (scoreEl) scoreEl.textContent = `Score: ${quizScore}`;
@@ -994,13 +1011,14 @@ function renderActiveQuizQuestionCard() {
         }
     }
 
-    const optionButtons = document.querySelectorAll("#quiz-options-matrix .option-btn");
-    optionButtons.forEach((btn, index) => {
-        btn.textContent = currentQuestion.options[index] || "";
-        btn.style.borderColor = "#444";
-        btn.style.background = "#1a1a1a";
-        btn.disabled = false;
-    });
+	const optionButtons = document.querySelectorAll("#quiz-options-matrix .option-btn");
+
+	optionButtons.forEach((btn, index) => {
+		btn.textContent = shuffledOptions[index]?.text || "";
+		btn.style.borderColor = "#444";
+		btn.style.background = "#1a1a1a";
+		btn.disabled = false;
+	});
 }
 
 /* Process Answer Choice Indices Click Events */
@@ -1010,7 +1028,7 @@ function handleOptionChoiceClick(selectedIndex) {
     
     optionButtons.forEach(btn => btn.disabled = true);
 
-    const isCorrect = selectedIndex === currentQuestion.correctIndex;
+	const isCorrect = selectedIndex === currentQuestion.shuffledCorrectIndex;
     if (isCorrect) {
         quizScore++;
         optionButtons[selectedIndex].style.background = "#2e7d32";
@@ -1018,7 +1036,7 @@ function handleOptionChoiceClick(selectedIndex) {
     } else {
         optionButtons[selectedIndex].style.background = "#c62828";
         optionButtons[selectedIndex].style.borderColor = "#ef5350";
-        optionButtons[currentQuestion.correctIndex].style.background = "#2e7d32";
+        optionButtons[currentQuestion.shuffledCorrectIndex].style.background = "#2e7d32";
     }
 
     setTimeout(() => {
