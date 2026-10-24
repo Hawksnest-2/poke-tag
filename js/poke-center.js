@@ -166,10 +166,17 @@ function saveOwnedCards() {
 function loadOwnedCards() {
     // 1. Audio Driver Configuration Loader
     const soundPref = localStorage.getItem("audioMutePreference");
-    if (soundPref !== null) {
-        isSoundEnabled = soundPref === "true";
-        if (settingsSoundToggle) settingsSoundToggle.checked = isSoundEnabled;
-    }
+	if (soundPref !== null) {
+    // A preference exists: use it
+		isSoundEnabled = soundPref === "true";
+	} else {
+    // No preference exists yet: default to true
+		isSoundEnabled = true;
+	}
+	// Sync the visual toggle with the actual state regardless of where it came from
+	if (settingsSoundToggle) {
+		settingsSoundToggle.checked = isSoundEnabled;
+	}
 
     // 2. Collection Progress Profile Parser
     const raw = localStorage.getItem("ownedCards");
