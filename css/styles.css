@@ -1615,6 +1615,10 @@ Settings Managed:
     overflow-y: auto;
 }
 
+#settings-page .overview-header {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
 
 /* =========================================================
    Settings Navigation
@@ -1657,7 +1661,7 @@ Opens Settings page.
     width: 100%;
     max-width: 500px;
 
-    margin: 20px auto;
+    margin: 15px auto;
 
     padding: 0 10px;
 
@@ -1675,18 +1679,12 @@ Opens Settings page.
         -apple-system,
         BlinkMacSystemFont,
         sans-serif;
-
     font-size: 1.2rem;
     font-weight: 800;
-
     color: #f6bd20;
-
     text-align: center;
-
     letter-spacing: 2px;
-
-    margin: 20px 0 5px 0;
-
+    margin: -5px 0 10px 0;
     transform: skewX(-10deg);
 }
 
@@ -1697,27 +1695,21 @@ Opens Settings page.
 
 .settings-card {
     background: #1a1a1a;
-
     border: 2px solid #333;
     border-radius: 12px;
-
     padding: 16px;
-
     text-align: left;
 }
 
 .settings-card h3 {
     margin-top: 0;
     margin-bottom: 8px;
-
     font-size: 1.2rem;
 }
 
 .settings-card p {
     margin-bottom: 16px;
-
     color: #ccc;
-
     font-size: 0.95rem;
     line-height: 1.4;
 }
@@ -1736,24 +1728,16 @@ Opens Settings page.
 
 .settings-action-btn {
     display: block;
-
     width: 100%;
-
     padding: 12px;
-
     border: none;
     border-radius: 8px;
-
     box-sizing: border-box;
-
     text-align: center;
     text-decoration: none;
-
     font-size: 1.1rem;
     font-weight: bold;
-
     cursor: pointer;
-
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -1789,6 +1773,7 @@ Opens Settings page.
 
 .danger-zone {
     border-color: #8b0000;
+	margin-top: 15px;
 }
 
 
@@ -1807,7 +1792,7 @@ Opens Settings page.
     justify-content: space-between;
     align-items: center;
 
-    margin-bottom: 12px;
+    margin-bottom: 0;
 
     padding: 16px;
 

@@ -256,14 +256,36 @@
         </div>
         
         <h3 class="settings-title">Poké-Center Settings</h3>
-        
         <div class="settings-container">
-            <!-- FEEDBACK -->
-            <div class="settings-card">
-                <h3>📬 App Feedback</h3>
-                <span class="control-sub-desc">Report bugs to Nurse Joy, or tell our Trainers your ideas via our official feedback channel.</span>
-                <a href="https://forms.gle/PAzV3F8mksGG9VSZ8" target="_blank" class="settings-action-btn feedback-btn">Open Google Form</a>
-            </div>
+
+			<!-- Add to Home Screen Instructions -->
+			<div class="settings-control-row" id="install-instruction-row">
+				<div class="control-label-block">
+					<span class="control-main-title">
+						📱 Install to Home Screen
+					</span>
+					<span
+						id="install-status-text"
+						class="control-sub-desc">
+						Learn how to install Poké‑Center for a full-screen experience.
+					</span>
+				</div>
+				<div class="control-action-block">
+					<button id="settings-install-guide-btn" class="settings-action-btn legend-btn" style="white-space: nowrap; min-width: 110px; padding: 8px 12px; font-size: 0.85rem; flex-shrink: 0;">How to Install</button>
+				</div>
+			</div>
+			
+            <!-- Rarity Legend -->
+			<div class="settings-control-row">
+				<div class="control-label-block">
+					<span class="control-main-title">👁️ View Rarity Icons</span>
+				</div>
+				<div class="control-action-block">
+					<!-- 🛠 FIX: Change the id text value and assign a clean action-button utility class -->
+					<button id="legend-open-btn" class="settings-action-btn legend-btn">View Legend</button>
+				</div>
+			</div>
+
 			<!-- Audio Control Row -->
 			<div class="settings-control-row">
 				<div class="control-label-block">
@@ -304,34 +326,16 @@
                 </select>
 				</div>
 			</div>
-            <!-- Rarity Legend -->
-			<div class="settings-control-row">
-				<div class="control-label-block">
-					<span class="control-main-title">👁️ View Rarity Icons</span>
-				</div>
-				<div class="control-action-block">
-					<!-- 🛠 FIX: Change the id text value and assign a clean action-button utility class -->
-					<button id="legend-open-btn" class="settings-action-btn legend-btn">View Legend</button>
-				</div>
-			</div>
-			<!-- Add to Home Screen Instructions -->
-			<div class="settings-control-row" id="install-instruction-row">
-				<div class="control-label-block">
-					<span class="control-main-title">
-						📱 Install to Home Screen
-					</span>
-					<span
-						id="install-status-text"
-						class="control-sub-desc">
-						Learn how to install Poké‑Center for a full-screen experience.
-					</span>
-				</div>
-				<div class="control-action-block">
-					<button id="settings-install-guide-btn" class="settings-action-btn legend-btn" style="white-space: nowrap; min-width: 110px; padding: 8px 12px; font-size: 0.85rem; flex-shrink: 0;">How to Install</button>
-				</div>
-			</div>
-		<div>
 
+
+            <!-- FEEDBACK -->
+            <div class="settings-card">
+                <h3>📬 App Feedback</h3>
+                <span class="control-sub-desc">Report bugs to Nurse Joy, or tell our Trainers your ideas via our official feedback channel.</span>
+                <a href="https://forms.gle/PAzV3F8mksGG9VSZ8" target="_blank" class="settings-action-btn feedback-btn">Open Google Form</a>
+            </div>
+
+		<div>
 
             <!-- BACKUP & RESTORE -->
             <div class="settings-card">
@@ -343,6 +347,7 @@
                     <button id="settings-import-btn" class="settings-action-btn import-btn">📥 Import Data</button>
                 </div>
             </div>
+
             <!-- GLOBAL FACTORY RESET -->
 				<div class="settings-card danger-zone">
 					<h3>⚠️ Global Factory Reset</h3>
