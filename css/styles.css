@@ -2025,11 +2025,26 @@ Settings → View Legend
 
     box-sizing: border-box;
 
-    background: #000;
+    background: var(--greatball-color);
 
     z-index: 2000;
 }
 
+#install-guide-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--pokeball-color);
+
+    box-sizing: border-box;
+    z-index: 2000;
+}
 
 /* =========================================================
    Legend Launch Button
@@ -2056,24 +2071,28 @@ Settings → View Legend
 ========================================================= */
 
 .legend-nav-header {
+    position: relative;
     display: flex;
+    justify-content: center;
     align-items: center;
-
-    gap: 16px;
-
     padding: 16px;
-
     background: #111;
-
     border-bottom: 1px solid #444;
 }
 
 .legend-nav-header h2 {
     margin: 0;
+	text-align: center;
+	width: 100%
+}
 
-    font-size: 1.2rem;
-
-    color: #fff;
+.legend-nav-header .return-button {
+    position: absolute;
+    left: 16px;
+    font-size: 2.2rem;    /* matches home gear */
+    padding: 0;
+    margin: 0;
+    background: transparent;
 }
 
 

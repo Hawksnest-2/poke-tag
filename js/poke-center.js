@@ -80,6 +80,9 @@ const rarityLegendPage = document.getElementById("rarity-legend-page");
 const legendOpenBtn = document.getElementById("legend-open-btn");
 const legendCloseBtn = document.getElementById("legend-close-btn");
 const legendMatrixGrid = document.getElementById("legend-matrix-grid");
+/* Home Screen Modal References */
+const installGuidePage = document.getElementById("install-guide-page");
+const installGuideCloseBtn = document.getElementById("install-guide-close-btn");
 /* Home View Screen Hooks */
 const mainHeader = document.getElementById("main-header");
 const collectionSelector = document.getElementById("collection-selector");
@@ -208,13 +211,24 @@ function loadOwnedCards() {
         if (settingsQuizExpertToggle) settingsQuizExpertToggle.checked = isExpertQuizMode;
     }
 
-    // 5. Standalone Display Mode Checker
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        const installRow = document.getElementById("install-instruction-row");
-        if (installRow) {
-            installRow.style.display = "none";
-        }
-    }
+    // 5. Install to Home Scree Guide
+	const installStatusText =
+		document.getElementById(
+			"install-status-text"
+		);
+	if (installStatusText) {
+		if (
+			window.matchMedia(
+				"(display-mode: standalone)"
+			).matches
+		) {
+			installStatusText.textContent =
+				"✅ Home Screen version detected on this device.";
+		} else {
+	        installStatusText.textContent =
+				"Install Poké‑Center for a full-screen experience.";
+		}
+	}
 }
 
 
@@ -241,9 +255,10 @@ function showScreen(screen) {
     if (quizSetupPanel) quizSetupPanel.style.display = "none";
     if (quizArenaPanel) quizArenaPanel.style.display = "none";
     if (rarityLegendPage) rarityLegendPage.style.display = "none";
+	if (installGuidePage) installGuidePage.style.display = "none";
 
     // Clean up residual hidden framework flags
-    const legacyScreens = ["main-header", "collection-selector", "collection-overview", "card-viewer", "pokedex", "settings-page", "quiz-setup-page", "quiz-arena-page", "rarity-legend-page"];
+    const legacyScreens = ["main-header", "collection-selector", "collection-overview", "card-viewer", "pokedex", "settings-page", "quiz-setup-page", "quiz-arena-page", "rarity-legend-page", "install-guide-page"];
     legacyScreens.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove("hidden");
@@ -290,6 +305,11 @@ function showScreen(screen) {
             renderRarityLegendGrid();
             if (rarityLegendPage) rarityLegendPage.style.display = "flex";
             break;
+		case "install-guide":
+			if (installGuidePage) {
+				installGuidePage.style.display = "flex";
+			}
+			break;
     }
 }
 
@@ -854,18 +874,26 @@ if (legendCloseBtn) {
     legendCloseBtn.addEventListener("click", () => showScreen("settings"));
 }
 
-/* Install Guide Alert Modal Trigger */
-const installGuideBtn = document.getElementById("settings-install-guide-btn");
+/* Home Screen Install Guide Listeners */
+const installGuideBtn =
+    document.getElementById(
+        "settings-install-guide-btn"
+    );
 if (installGuideBtn) {
-    installGuideBtn.addEventListener("click", () => {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-            alert("📱 To run in Full Screen on iOS:\n\n1. Tap the Safari SHARE button (square with up arrow) at the bottom of your screen.\n2. Scroll down and tap 'Add to Home Screen'.\n3. Launch the new icon from your home screen layout!");
-        } else {
-            alert("🤖 To run in Full Screen on Android:\n\n1. Tap the Chrome menu button (three vertical dots) in the top-right corner.\n2. Select 'Install app' or 'Add to Home screen'.\n3. Open the application directly from your device launcher drawer!");
-        }
-    });
+    installGuideBtn.addEventListener(
+        "click",
+        () => showScreen("install-guide")
+    );
 }
+if (installGuideCloseBtn) {
+
+    installGuideCloseBtn.addEventListener(
+        "click",
+        () => showScreen("settings")
+    );
+
+}
+
 
 
 /* 2x2 Arena Gauntlet Mode Listeners */

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poké‑Center Collection Manager</title>
+    <title>Poké‑Center & Gym Challenge</title>
     <link rel="stylesheet" href="./css/styles.css">
 	<link rel="manifest" href="manifest.json">
 </head>
@@ -317,14 +317,20 @@
 			<!-- Add to Home Screen Instructions -->
 			<div class="settings-control-row" id="install-instruction-row">
 				<div class="control-label-block">
-					<span class="control-main-title">📱 App Installation Guide</span>
-					<span class="control-sub-desc">Learn how to unlock immersive full-screen gameplay.</span>
+					<span class="control-main-title">
+						📱 Install to Home Screen
+					</span>
+					<span
+						id="install-status-text"
+						class="control-sub-desc">
+						Learn how to install Poké‑Center for a full-screen experience.
+					</span>
 				</div>
 				<div class="control-action-block">
 					<button id="settings-install-guide-btn" class="settings-action-btn legend-btn" style="white-space: nowrap; min-width: 110px; padding: 8px 12px; font-size: 0.85rem; flex-shrink: 0;">How to Install</button>
 				</div>
 			</div>
-			<div>
+		<div>
 
 
             <!-- BACKUP & RESTORE -->
@@ -349,7 +355,7 @@
 			<!-- Full Screen Legend Overlay Screen Container -->
 			<div id="rarity-legend-page" style="display: none;">
 				<div class="legend-nav-header">
-					<button id="legend-close-btn" class="return-button">← Return to Settings</button>
+					<button id="legend-close-btn" class="return-button">⚙️</button>
 					<h2>Rarity Icon Legend</h2>
 				</div>
 	
@@ -359,6 +365,80 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Full Screen Home Screen Install Guide Container -->
+			<!-- ==========================================
+				INSTALL GUIDE PAGE
+			========================================== -->
+			<div id="install-guide-page" style="display:none;">
+				<div class="legend-nav-header">
+					<button
+						id="install-guide-close-btn"
+						class="return-button">
+						⚙️
+					</button>
+					<h2>Install Poké‑Center</h2>
+				</div>
+				<div class="legend-scroll-frame">
+					<div class="settings-card">
+						<h3>📱 About Home Screen Installation</h3>
+						<p>
+							Installing Poké‑Center to your Home Screen
+							allows the app to launch in a dedicated
+							full-screen mode without browser navigation
+							bars or tabs.
+						</p>
+						<p>
+							The installed version behaves more like
+							a native mobile application and can be
+							launched directly from your device's
+							Home Screen.
+						</p>
+						<p>
+							Follow the instructions below for your
+							device type to complete installation.
+						</p>
+					</div>
+					<div class="settings-card">
+						<h3>🍎 iPhone & iPad</h3>
+						<p>1. Tap the Safari Share button.</p>
+						<p>2. Select Add to Home Screen.</p>
+						<p>3. Launch the new icon from your Home Screen.</p>
+					</div>
+					<div class="settings-card">
+						<h3>🤖 Android</h3>
+						<p>1. Tap the Chrome menu button.</p>
+						<p>2. Select Install App or Add to Home Screen.</p>
+						<p>3. Launch the new icon from your launcher.</p>
+					</div>
+					<div class="settings-card">
+						<h3>⚠️ Trainer Tip</h3>
+						<p>
+							Your collection progress does not
+							automatically transfer to the
+							Home Screen version.
+						</p>
+						<p>
+							Before installing, visit:
+						</p>
+						<p>
+							<strong>
+							Settings → Backup & Restore Progress
+							</strong>
+						</p>
+						<p>
+							and copy your backup key.
+						</p>
+						<p>
+							After launching the Home Screen
+							version, import the backup key
+							to continue your collection
+							exactly where you left off.
+						</p>
+					</div>
+				</div>
+			</div>
+
 
     <!-- ==========================================
          CARD DETAIL MODAL INTERACTIVE POPUP
