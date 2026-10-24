@@ -1135,11 +1135,23 @@ function buildAdvancedMixPlaylist(tier, totalCount) {
     const badge = document.getElementById("quiz-difficulty-badge");
     if (badge) {
         badge.textContent = `🏆 ${tier.toUpperCase()} CHALLENGE ${isExpertQuizMode ? '(EXPERT)' : ''}`;
+        
+        // Map the selected tier directly to your existing CSS theme variable configurations
+        const tierVariables = {
+            "easy": "var(--pokeball-color)",
+            "medium": "var(--greatball-color)",
+            "hard": "var(--ultraball-color)",
+            "expert": "var(--masterball-color)"
+        };
+        
+        // Apply the theme variable dynamically or default to white if unmatched
+        badge.style.color = tierVariables[tier.toLowerCase()] || "#ffffff";
     }
 
     showScreen("quiz-arena");
     renderActiveQuizQuestionCard();
 }
+
 
 /* Render Active Question Card and Button Options Matrix */
 function renderActiveQuizQuestionCard() {
