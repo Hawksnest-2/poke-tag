@@ -286,6 +286,7 @@ Prevents browser-level double scrolling.
     flex: 1;
 
     overflow-y: auto;
+    overflow-x: hidden;
 
     padding-bottom: 30px;
 
@@ -354,14 +355,10 @@ Home-only subtitle override.
 
 .collection-selector {
     display: grid;
-
     grid-template-columns:
         repeat(auto-fill, minmax(90px, 1fr));
-
-    gap: 14px;
-
+    gap: 8px;
     margin: 16px auto 0 auto;
-
     max-width: 95%;
 }
 
@@ -375,16 +372,11 @@ Home-only subtitle override.
 
 .collection-tile {
     background: #1a1a1a;
-
     border: 2px solid #333;
     border-radius: 14px;
-
-    padding: 16px;
-
+    padding: 0;
     text-align: center;
-
     cursor: pointer;
-
     transition:
         transform 0.25s ease,
         box-shadow 0.25s ease;
@@ -410,13 +402,12 @@ Home-only subtitle override.
 
 .collection-name {
     display: block;
-
     margin-top: 6px;
-
     font-size: 1rem;
     font-weight: 600;
-
     color: #f0f0f0;
+    text-align: center;
+	word-break: normal;
 }
 
 /************************************************************
