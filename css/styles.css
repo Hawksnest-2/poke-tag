@@ -474,11 +474,8 @@ Purpose:
     width: 100%;
     max-width: 200px;
     height: auto;
-
     display: block;
-
     margin: 0 auto 10px auto;
-
     flex-shrink: 0;
 }
 
@@ -811,19 +808,13 @@ Purpose:
     position: fixed;
     top: 0;
     left: 0;
-
     width: 100vw;
     height: 100dvh;
-
     box-sizing: border-box;
-
     background-color: #0f0f0f;
-
     display: flex;
     flex-direction: column;
-
     overflow: hidden;
-
     z-index: 60;
 }
 
@@ -872,10 +863,8 @@ Purpose:
 
 .viewer-header-logo-group .return-button {
     padding: 0;
-
     background: transparent;
     border: none;
-
     cursor: pointer;
 }
 
@@ -904,15 +893,11 @@ Purpose:
 
 #viewer-scroll-layer {
     width: 100%;
-
     flex: 1;
-
     overflow-y: auto;
-
-    padding-bottom: 40px;
-
+    overflow-x: hidden;
+    padding-bottom: 30px;
     box-sizing: border-box;
-
     -webkit-overflow-scrolling: touch;
 }
 
@@ -926,14 +911,10 @@ Purpose:
 
 .card-grid {
     display: grid;
-
     grid-template-columns:
         repeat(auto-fill, minmax(90px, 1fr));
-
-    gap: 24px;
-
-    margin-top: 20px;
-
+    gap: 8px;
+    margin-top: 5px;
     max-width: 100%;
 }
 
@@ -954,15 +935,10 @@ Purpose:
 
 .card-tile {
     background: #1a1a1a;
-
     border-radius: 12px;
-
-    padding: 10px;
-
+    padding: 5px;
     text-align: center;
-
     cursor: pointer;
-
     transition: transform .2s ease;
 }
 
@@ -973,18 +949,14 @@ Purpose:
 .card-image {
     width: 100%;
     height: auto;
-
     border-radius: 8px;
 }
 
 .card-info {
     margin-top: 8px;
-
     text-align: center;
-
     font-size: 0.9rem;
-
-    color: #ddd;
+    color: #fff;
 }
 
 .card-number {
