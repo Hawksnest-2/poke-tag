@@ -49,6 +49,7 @@ const ownedCards = new Map();
 let currentCollectionId = null;
 let currentCollectionData = null;
 let pendingCatchRefresh = false;
+let isRewardSequenceActive = false;
 let currentModalCard = null;
 let scale = 1;
 let startDistance = 0;
@@ -785,18 +786,33 @@ if (pokedexViewButton) {
 /* Card Viewer Lightbox Close Hooks */
 if (modalClose) {
     modalClose.addEventListener("click", () => {
+
+        if (isRewardSequenceActive) {
+
+            cardModal.classList.add("hidden");
+
+            executeSequentialRewardDraw();
+
+            return;
+        }
+
         closeCardModal();
+
         if (pendingCatchRefresh) {
             pendingCatchRefresh = false;
+
             renderCardViewer();
-            
-            const viewerScroll = document.getElementById("viewer-scroll-layer");
+
+            const viewerScroll =
+                document.getElementById("viewer-scroll-layer");
+
             if (viewerScroll) {
                 viewerScroll.scrollTop = 0;
             }
         }
     });
 }
+
 
 /* Direct Catch Pack Launcher Trigger */
 if (catchOpenImageOverview) {
@@ -1284,26 +1300,16 @@ function evaluateQuizEndRewards() {
 
 /* Custom interactive reward opening waterfall flow loop matrix */
 function executeSequentialRewardDraw() {
+	isRewardSequenceActive = true;
     if (rewardQueueCount <= 0) {
-        showScreen("overview");
-        enterCollectionOverview(currentCollectionId);
-        return;
-    }
+		isRewardSequenceActive = false;
+		showScreen("overview");
+		enterCollectionOverview(currentCollectionId);
+		return;
+	}
 
     rewardQueueCount--;
     catchRandomPokemon();
-
-    const originalModalClose = document.getElementById("modal-close");
-    if (originalModalClose) {
-        const newCloseBtn = originalModalClose.cloneNode(true);
-        originalModalClose.parentNode.replaceChild(newCloseBtn, originalModalClose);
-        
-        newCloseBtn.addEventListener("click", () => {
-            const cardModalEl = document.getElementById("card-modal");
-            if (cardModalEl) cardModalEl.classList.add("hidden");
-            executeSequentialRewardDraw();
-        });
-    }
 }
 
 // Attach event options index event parameters
