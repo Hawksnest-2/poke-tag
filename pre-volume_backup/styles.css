@@ -1,0 +1,2447 @@
+/************************************************************
+1. GLOBAL
+
+Application-wide foundations.
+
+Purpose:
+- Lock viewport sizing
+- Establish global colors
+- Set default typography
+- Provide utility classes used across all screens
+
+Related HTML:
+- Entire application
+
+Related JS:
+- showScreen()
+- All page rendering functions
+************************************************************/
+
+/* ---------------------------------------------------------
+   Document & Viewport
+--------------------------------------------------------- */
+html,
+body {
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+/* ---------------------------------------------------------
+   Base Theme
+--------------------------------------------------------- */
+body {
+    background: #0f0f0f;
+    color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+/* ---------------------------------------------------------
+   Utilities
+--------------------------------------------------------- */
+.hidden {
+    display: none !important;
+}
+
+/************************************************************
+2. SHARED COMPONENTS
+
+Reusable UI components shared across multiple screens.
+
+Used By:
+- Home
+- Collection Overview
+- Card Viewer
+- My Pokédex
+- Settings
+- Rarity Legend
+
+Purpose:
+- Navigation buttons
+- Shared icons
+- Form inputs
+- Action buttons
+************************************************************/
+
+
+/* =========================================================
+   Navigation Buttons
+========================================================= */
+
+.return-button,
+.pokedex-button {
+    background-color: transparent;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    font-size: clamp(0.9rem, 5vw, 1.2rem);
+
+    transition:
+        background 0.15s ease,
+        transform 0.10s ease;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.return-button:active,
+.pokedex-button:active {
+    background: #444;
+    transform: scale(0.97);
+}
+
+
+/* =========================================================
+   Shared Navigation Icons
+========================================================= */
+
+.pokedex-icon,
+.pc-icon-small {
+    width: 40px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/*
+Used only by Settings navigation,
+but functions as a reusable icon utility.
+*/
+.pc-icon-settings {
+    width: 42px;
+    height: auto;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   Shared Dropdown Controls
+
+   Used By:
+   - Card Viewer Filter
+   - Settings Default Filter
+========================================================= */
+
+.filter-dropdown,
+.settings-dropdown-input {
+    background-color: #1a1a1a;
+    color: #ffffff;
+
+    border: 1px solid #444;
+    border-radius: 8px;
+
+    padding: 8px 12px;
+
+    font-size: 1rem;
+    font-weight: bold;
+
+    cursor: pointer;
+    outline: none;
+
+    min-width: 180px;
+}
+
+.settings-dropdown-input {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.filter-dropdown:focus,
+.settings-dropdown-input:focus {
+    border-color: #0078ff;
+}
+
+
+/* =========================================================
+   Shared Action Buttons
+
+   Used By:
+   - Collection Viewer
+   - Settings
+========================================================= */
+
+.reset-button {
+    background: #8b0000;
+    color: #fff;
+
+    padding: 12px 20px;
+
+    border-radius: 10px;
+    border: none;
+
+    cursor: pointer;
+
+    font-size: 1.1rem;
+
+    display: block;
+    margin: 20px auto 0;
+
+    width: fit-content;
+}
+
+.reset-button:hover {
+    background: #a30000;
+}
+
+/************************************************************
+3. HOME SCREEN
+
+Primary Application Landing Page
+
+Related HTML:
+#main-header
+#home-scroll-layer
+#collection-selector
+
+Related JS:
+showScreen("home")
+renderCollectionSelector()
+
+Purpose:
+- Main app landing page
+- Collection selection interface
+- Home navigation controls
+************************************************************/
+
+
+/* =========================================================
+   Home Layout Container
+========================================================= */
+
+#main-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    width: 100%; /* Changed from 100vw to prevent horizontal scrollbars */
+    height: 100dvh;
+    box-sizing: border-box;
+    padding-top: 10px;
+    background-color: #0f0f0f;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: hidden; /* Separates behaviors */
+    overflow-x: hidden; /* Added to freeze all left/right shifting completely */
+}
+
+
+/* =========================================================
+   Top Navigation
+========================================================= */
+
+/*
+Top-right Pokédex shortcut button.
+*/
+
+#main-header #home-pokedex-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+
+    margin: 0;
+    padding: 5px;
+
+    background: transparent;
+    border: none;
+
+    cursor: pointer;
+
+    z-index: 99999 !important;
+    font-size: 0.9rem;
+}
+
+/*
+Keeps Pokédex icon visually aligned with
+the Settings gear icon.
+*/
+
+#main-header #home-pokedex-button .pokedex-icon {
+    width: 40px;
+    height: auto;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   Home Scroll Region
+========================================================= */
+
+/*
+Owns scrolling for the collection selection area.
+Prevents browser-level double scrolling.
+*/
+
+#home-scroll-layer {
+    width: 100%;
+
+    flex: 1;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding-bottom: 30px;
+
+    box-sizing: border-box;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+.main-title,
+#home-pokedex-button {
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   Branding
+========================================================= */
+
+.main-logo {
+    width: 100%;
+    max-width: 100px;
+    height: auto;
+
+    display: block;
+    margin: 0 auto;
+}
+
+.title {
+    text-align: center;
+
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+
+    margin: 0 !important;
+}
+
+.subtitle {
+    text-align: center;
+
+    margin-top: 30px;
+
+    font-size: 1.2rem;
+    color: #ccc;
+}
+
+/*
+Home-only subtitle override.
+*/
+
+#main-header .subtitle {
+    font-size: 1.4rem;
+
+    max-width: 90%;
+
+    margin: 0 auto;
+    margin-top: 10px;
+}
+
+
+/* =========================================================
+   Collection Selector Grid
+
+   Populated By:
+   renderCollectionSelector()
+========================================================= */
+
+.collection-selector {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+    margin: 16px auto 0 auto;
+    max-width: 95%;
+}
+
+
+/* =========================================================
+   Collection Tiles
+
+   Generated By:
+   renderCollectionSelector()
+========================================================= */
+
+.collection-tile {
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 14px;
+    padding: 0;
+    text-align: center;
+    cursor: pointer;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.collection-tile:hover {
+    transform: translateY(-6px);
+
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, .35);
+
+    border-color: #555;
+}
+
+.collection-logo {
+    width: 100%;
+    height: auto;
+
+    object-fit: contain;
+
+    margin-bottom: 10px;
+}
+
+.collection-name {
+    display: block;
+    margin-top: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f0f0f0;
+    text-align: center;
+	word-break: normal;
+}
+
+/************************************************************
+4. COLLECTION OVERVIEW
+
+Collection Landing Screen
+
+Related HTML:
+#collection-overview
+
+Related JS:
+enterCollectionOverview()
+
+Purpose:
+- Collection summary
+- Collection logo
+- Progress tracking
+- Rarity breakdown
+************************************************************/
+
+
+/* =========================================================
+   Overview Layout
+========================================================= */
+
+.collection-overview {
+    padding: 15px 20px;
+    margin: 0 auto;
+
+    width: 100vw;
+    min-height: 100dvh;
+
+    box-sizing: border-box;
+
+    background-color: #0f0f0f;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    overflow-y: visible;
+
+    z-index: 50;
+}
+
+.collection-overview .overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+
+    padding-bottom: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   Collection Branding
+========================================================= */
+
+.overview-logo {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px auto;
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   Section Titles
+========================================================= */
+
+.overview-catch-title {
+    width: 100%;
+
+    text-align: center;
+
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   Collection Progress Summary
+
+   Updated By:
+   enterCollectionOverview()
+========================================================= */
+
+.overview-progress {
+    width: 100%;
+    max-width: 360px;
+
+    margin: 0 auto;
+
+    padding: 0 15px;
+
+    box-sizing: border-box;
+}
+
+.overview-progress p {
+    text-align: center;
+
+    font-size: 1.2rem;
+    font-weight: bold;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   Rarity Progress Tracking
+========================================================= */
+
+.overview-rarity-row {
+    display: grid;
+
+    grid-template-columns:
+        35px 95px 1fr 65px;
+
+    align-items: center;
+
+    gap: 8px;
+
+    width: 100%;
+
+    margin-bottom: 5px;
+
+    box-sizing: border-box;
+}
+
+.rarity-icon {
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.rarity-label {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.rarity-bar {
+    width: 100%;
+    height: 12px;
+
+    background: #222;
+
+    border: 1px solid #333;
+    border-radius: 6px;
+
+    overflow: hidden;
+}
+
+.rarity-fill {
+    width: 0%;
+
+    height: 100%;
+
+    background: #0078ff;
+
+    transition: width 0.3s ease;
+}
+
+.rarity-text {
+    text-align: right;
+
+    font-size: 1.1rem;
+    color: #ccc;
+
+    white-space: nowrap;
+}
+
+
+/************************************************************
+5. GYM CHALLENGE SELECTOR
+
+Challenge Entry Interface
+
+Located Within:
+#collection-overview
+
+Purpose:
+- Difficulty selection
+- Challenge launch controls
+- Ball-themed portals
+
+Related HTML:
+.quiz-gauntlet-grid
+.gauntlet-card
+.gym-portal-btn
+
+Related JS:
+Quiz Launch System
+startQuizBattle()
+************************************************************/
+
+
+/* =========================================================
+   Challenge Grid Layout
+========================================================= */
+
+.quiz-gauntlet-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+
+    width: 100%;
+    max-width: 320px;
+
+    margin: 15px auto;
+
+    box-sizing: border-box;
+}
+
+.gauntlet-card {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+}
+
+.gauntlet-card .sub-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   Poké Ball Portal Buttons
+========================================================= */
+
+.gym-portal-btn {
+    width: 95px;
+    height: 95px;
+
+    padding: 0 !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background: #1a1a1a;
+    color: #ffffff;
+
+    border: 4px solid #f5c542;
+    border-radius: 50%;
+
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.4);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.1s ease,
+        background-color 0.1s ease;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.gym-portal-btn:active {
+    transform: scale(0.94);
+    background-color: #252525;
+}
+
+
+/* =========================================================
+   Difficulty Labels
+========================================================= */
+
+.mode-label {
+    font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+
+    font-size: 1.1rem;
+    font-weight: bold;
+
+    color: #ccc;
+
+    letter-spacing: 0.5px;
+}
+
+/* =========================================================
+   Pokeball Color Variants
+========================================================= */
+:root {
+    --pokeball-color: #ef5350;
+    --greatball-color: #29b6f6;
+    --ultraball-color: #fbc02d;
+    --masterball-color: #ab47bc;
+}
+
+/* =========================================================
+   Difficulty Color Variants
+========================================================= */
+
+.ball-pokeball {
+    border-color: var(--pokeball-color) !important;
+}
+
+.ball-greatball {
+    border-color: var(--greatball-color) !important;
+}
+
+.ball-ultraball {
+    border-color: var(--ultraball-color) !important;
+}
+
+.ball-masterball {
+    border-color: var(--masterball-color) !important;
+}
+
+
+/* =========================================================
+   Ball Images
+========================================================= */
+
+.gauntlet-ball-img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+/* =========================================================
+   Quiz Related
+========================================================= */
+
+.quiz-themed-title {
+    color: var(--challenge-color);
+}
+.quiz-themed-card {
+    border-color: var(--challenge-color) !important;
+}
+/* =========================================================
+   Quiz Color Variants 
+========================================================= */
+
+.quiz-theme-pokeball {
+    --challenge-color: var(--pokeball-color);
+}
+
+.quiz-theme-greatball {
+    --challenge-color: var(--greatball-color);
+}
+
+.quiz-theme-ultraball {
+    --challenge-color: var(--ultraball-color);
+}
+
+.quiz-theme-masterball {
+    --challenge-color: var(--masterball-color);
+}
+
+/************************************************************
+6. CARD VIEWER
+
+Collection Card Browser
+
+Related HTML:
+#card-viewer
+#viewer-scroll-layer
+#card-grid
+
+Related JS:
+renderCardViewer()
+executeFilteredGridRender()
+
+Purpose:
+- Browse collection contents
+- Filter owned/missing cards
+- Open card detail modal
+- Reset collection progress
+************************************************************/
+
+
+/* =========================================================
+   Viewer Layout
+========================================================= */
+
+.card-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    box-sizing: border-box;
+    background-color: #0f0f0f;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 60;
+}
+
+
+/* =========================================================
+   Viewer Header
+========================================================= */
+
+.card-viewer .overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+
+    flex-shrink: 0;
+
+    padding: 10px 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   Viewer Branding Area
+
+   Contains:
+   - Collection Logo
+   - Collection Return Button
+   - Filter Bar
+========================================================= */
+
+.viewer-header-logo-group {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+
+    flex-shrink: 0;
+
+    margin: 5px auto 10px auto;
+}
+
+.viewer-header-logo-group .return-button {
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   Filter Controls
+
+   Connected To:
+   #viewer-filter-select
+
+   Used By:
+   executeFilteredGridRender()
+========================================================= */
+
+.viewer-filter-bar {
+    margin: 5px auto;
+}
+
+
+/* =========================================================
+   Scroll Region
+
+   Owns scrolling for the card browser.
+   Prevents entire page scrolling.
+========================================================= */
+
+#viewer-scroll-layer {
+    width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 30px;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   Card Grid
+
+   Populated By:
+   executeFilteredGridRender()
+========================================================= */
+
+.card-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+    margin-top: 5px;
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   Card Tile
+
+   Generated By:
+   executeFilteredGridRender()
+
+   JS Classes:
+   .card-tile
+   .card-image
+   .card-info
+   .card-number
+   .card-name
+========================================================= */
+
+.card-tile {
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform .2s ease;
+}
+
+.card-tile:hover {
+    transform: translateY(-4px);
+}
+
+.card-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.card-info {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.card-number {
+    font-weight: 600;
+
+    margin-bottom: 2px;
+}
+
+.card-name {
+    font-size: 0.95rem;
+
+    margin-bottom: 2px;
+}
+
+
+/* =========================================================
+   Collection Maintenance
+
+   Connected To:
+   #reset-pokedex-button
+
+   Used By:
+   resetCurrentCollection()
+========================================================= */
+
+/*
+.reset-button
+
+Defined in:
+2. SHARED COMPONENTS
+
+Kept there because it functions as a reusable
+application action button rather than being
+exclusive to the Card Viewer.
+*/
+
+/************************************************************
+7. CARD MODAL
+
+Card Detail Inspection Modal
+
+Related HTML:
+#card-modal
+.card-modal-content
+
+Related JS:
+openCardModal()
+catchRandomPokemon()
+setModalRarityBorder()
+
+Purpose:
+- Display full card artwork
+- Show card metadata
+- Display rarity information
+- Present collection status
+- Support zoom / pan interactions
+************************************************************/
+
+
+/* =========================================================
+   Modal Overlay
+
+   Full-screen darkened backdrop.
+========================================================= */
+
+.card-modal {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, .85);
+
+    z-index: 99999;
+}
+
+
+/* =========================================================
+   Modal Card Container
+
+   Dynamic rarity borders are applied here by:
+   setModalRarityBorder()
+========================================================= */
+
+.card-modal-content {
+    display: flex;
+    flex-direction: column;
+
+    width: 340px;
+    max-width: 90%;
+
+    padding: 16px;
+
+    box-sizing: border-box;
+
+    background-color: #1a1a1a;
+
+    border: 4px solid transparent;
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   Dynamic Rarity Border States
+
+   Applied By:
+   setModalRarityBorder()
+========================================================= */
+
+.rarity-common {
+    border-color: #666;
+}
+
+.rarity-uncommon {
+    border-color: #3fa9f5;
+}
+
+.rarity-rare {
+    border-color: #f5c542;
+}
+
+
+/* =========================================================
+   Modal Header
+========================================================= */
+
+.modal-close-bar {
+    display: flex;
+    justify-content: flex-end;
+
+    width: 100%;
+
+    margin-bottom: 5px;
+}
+
+.modal-close-btn {
+    position: static !important;
+
+    margin: 0;
+
+    background: none;
+    border: none;
+
+    color: #fff;
+
+    font-size: 1.8rem;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   Card Display Area
+========================================================= */
+
+.modal-card-body {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    width: 100%;
+}
+
+
+/*
+Supports future zoom and pan functionality.
+*/
+
+.modal-card-body img {
+    width: 100%;
+    height: auto;
+
+    max-height: 65vh;
+
+    object-fit: contain;
+
+    border-radius: 8px;
+
+    margin-top: 0;
+
+    touch-action: none;
+    transform-origin: center center;
+}
+
+
+/* =========================================================
+   Metadata Container
+
+   Contains:
+   - Card Number
+   - Card Name
+   - Rarity
+   - Collection Status
+========================================================= */
+
+.modal-metadata {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    text-align: center;
+
+    gap: 2px;
+}
+
+
+/* =========================================================
+   Shared Metadata Typography
+========================================================= */
+
+#modal-number,
+#modal-name,
+#modal-rarity-text {
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+
+    text-align: center;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   Card Number
+========================================================= */
+
+#modal-number {
+    font-size: 1.1rem;
+    font-weight: 600;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   Card Name
+========================================================= */
+
+#modal-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   Rarity Display
+========================================================= */
+
+#modal-rarity-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+
+    color: #cccccc;
+}
+
+#modal-rarity-icon {
+    display: inline-block;
+
+    text-align: center;
+    vertical-align: middle;
+
+    margin-right: 4px;
+}
+
+/************************************************************
+8. MY POKÉDEX
+
+Global Collection Progress Viewer
+
+Related HTML:
+#pokedex
+#pokedex-scroll-layer
+#pokedex-grid
+
+Related JS:
+renderPokedexPage()
+
+Purpose:
+- Cross-collection progress tracking
+- Collection summary tiles
+- Direct navigation back to card viewer
+- Collection completion overview
+************************************************************/
+
+
+/* =========================================================
+   Pokédex Layout Shell
+========================================================= */
+
+.pokedex {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100dvh;
+
+    margin: 0 auto;
+    padding: 0;
+
+    box-sizing: border-box;
+
+    background-color: #0f0f0f;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    z-index: 100;
+}
+
+
+/* =========================================================
+   Header Layout
+========================================================= */
+
+.pokedex .overview-header {
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
+    padding: 14px 20px 6px 20px;
+
+    box-sizing: border-box;
+
+    background-color: #0f0f0f;
+
+    z-index: 10;
+
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   Scroll Container
+
+   Owns all page scrolling for My Pokédex.
+========================================================= */
+
+#pokedex-scroll-layer {
+    width: 100%;
+
+    max-height: calc(100dvh - 120px);
+
+    overflow-y: auto;
+
+    padding: 0 20px 30px 20px;
+
+    box-sizing: border-box;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   Pokédex Branding
+========================================================= */
+
+.pokedex-logo {
+    width: 100px;
+    height: auto;
+
+    display: block;
+
+    margin: 0 auto;
+}
+
+/*
+Centered logo behavior for sticky header.
+*/
+
+#pokedex .overview-header .pokedex-logo {
+    display: block;
+
+    max-width: 150px;
+    height: auto;
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   Header Alignment Helpers
+========================================================= */
+
+/*
+Removes legacy spacer element from layout calculations.
+*/
+
+#pokedex .overview-header div[style*="width:75px"],
+#pokedex .overview-header div[style*="width: 75px"] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   Return Navigation
+========================================================= */
+
+/*
+Fixed-position return button mirrors the Home screen
+corner navigation layout.
+*/
+
+#pokedex .overview-header #pokedex-return-button {
+    position: fixed;
+
+    top: 10px;
+    left: 10px;
+
+    margin: 0;
+    padding: 5px;
+
+    background: transparent;
+    border: none;
+
+    cursor: pointer;
+
+    z-index: 99999 !important;
+
+    font-size: 0.9rem;
+}
+
+#pokedex .overview-header #pokedex-return-button .pc-icon-small {
+    width: 42px;
+    height: auto;
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   Page Titles
+========================================================= */
+
+.pokedex-view-title {
+    display: block;
+
+    width: 100%;
+
+    text-align: center;
+
+    font-size: 1.8rem;
+    font-weight: bold;
+
+    color: #ffffff;
+
+    margin: 10px 0 5px 0;
+
+    box-sizing: border-box;
+}
+
+.pokedex-view-subtitle {
+    display: block;
+
+    width: 100%;
+
+    text-align: center;
+
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+
+    font-size: 1.2rem;
+    font-weight: 500;
+
+    color: #ffffff;
+
+    margin: 5px 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   Collection Summary Grid
+
+   Populated By:
+   renderPokedexPage()
+========================================================= */
+
+.pokedex-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(90px, 1fr));
+
+    gap: 24px;
+
+    margin-top: 16px;
+
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   Collection Summary Cards
+
+   Generated By:
+   renderPokedexPage()
+
+   JS Classes:
+   .mc-tile
+   .mc-logo
+   .mc-progress
+========================================================= */
+
+.mc-tile {
+    background: #1a1a1a;
+
+    border: 2px solid #333;
+    border-radius: 14px;
+
+    padding: 16px;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.mc-tile:hover {
+    transform: translateY(-6px);
+
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, .35);
+}
+
+.mc-logo {
+    width: 100%;
+    height: auto;
+
+    margin-bottom: 10px;
+}
+
+.mc-progress {
+    margin-top: 10px;
+
+    color: #ccc;
+
+    font-size: 1.1rem;
+}
+
+
+/************************************************************
+9. SETTINGS
+
+Application Configuration Center
+
+Related HTML:
+#settings-page
+
+Related JS:
+generateBackupStringKey()
+handleDataImport()
+resetAllCollectionsGlobally()
+
+Settings Managed:
+- Audio Preferences
+- Quiz Difficulty Preferences
+- Default Viewer Filter
+- Backup / Restore
+- Rarity Legend Access
+- Global Reset
+************************************************************/
+
+
+/* =========================================================
+   Settings Page Layout
+========================================================= */
+
+.settings-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100dvh;
+
+    margin: 0 auto;
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background-color: #0f0f0f;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow-y: auto;
+}
+
+#settings-page .overview-header {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* =========================================================
+   Settings Navigation
+========================================================= */
+
+/*
+Home screen gear button.
+Opens Settings page.
+*/
+
+.settings-gear-btn {
+    position: fixed;
+
+    top: 10px;
+    left: 10px;
+
+    background: transparent;
+    border: none;
+
+    font-size: 2.2rem;
+
+    cursor: pointer;
+
+    z-index: 99999 !important;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =========================================================
+   Settings Content Container
+========================================================= */
+
+.settings-container {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+
+    width: 100%;
+    max-width: 500px;
+
+    margin: 15px auto;
+
+    padding: 0 10px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   Screen Title
+========================================================= */
+
+.settings-title {
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #f6bd20;
+    text-align: center;
+    letter-spacing: 2px;
+    margin: -5px 0 10px 0;
+    transform: skewX(-10deg);
+}
+
+
+/* =========================================================
+   Settings Cards
+========================================================= */
+
+.settings-card {
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: left;
+}
+
+.settings-card h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+}
+
+.settings-card p {
+    margin-bottom: 16px;
+    color: #ccc;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   Settings Action Buttons
+
+   Used For:
+   - Feedback
+   - Backup
+   - Import
+   - Rarity Legend
+   - Reset Actions
+========================================================= */
+
+.settings-action-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =========================================================
+   Action Button Variants
+========================================================= */
+
+.copy-btn {
+    background-color: #444;
+    color: #fff;
+}
+
+.import-btn {
+    background-color: #6a8b5a;
+    color: #fff;
+}
+
+.feedback-btn {
+    background-color: #2e7d32;
+    color: #fff;
+}
+
+.legend-btn {
+    background-color: #5a94b4;
+    color: #fff;
+}
+
+.reset-all-btn {
+    background-color: #8b0000;
+    color: #fff;
+}
+
+.danger-zone {
+    border-color: #8b0000;
+	margin-top: 15px;
+}
+
+
+/* =========================================================
+   Settings Control Rows
+
+   Used For:
+   - Audio Toggle
+   - Expert Mode Toggle
+   - Default Filter Settings
+   - Rarity Legend Access
+========================================================= */
+
+.settings-control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 0;
+
+    padding: 16px;
+
+    background: #111;
+
+    border: 1px solid #444;
+    border-radius: 8px;
+}
+
+
+/* =========================================================
+   Control Label Block
+========================================================= */
+
+.control-label-block {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.control-main-title {
+    color: #fff;
+
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.control-sub-desc {
+    color: #888;
+
+    font-size: 0.8rem;
+}
+
+
+/* =========================================================
+   Backup & Restore
+========================================================= */
+
+#settings-backup-box {
+    width: 100%;
+    height: 60px;
+
+    margin-bottom: 12px;
+
+    padding: 8px;
+
+    box-sizing: border-box;
+
+    resize: none;
+
+    background: #0f0f0f;
+    color: #888;
+
+    border: 1px solid #333;
+    border-radius: 6px;
+
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.settings-button-row {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+}
+
+
+/* =========================================================
+   Toggle Switch System
+
+   Used By:
+   - Audio Toggle
+   - Expert Mode Toggle
+========================================================= */
+
+.theme-toggle-switch {
+    position: relative;
+
+    display: inline-block;
+
+    width: 50px;
+    height: 26px;
+
+    flex-shrink: 0;
+}
+
+
+/* ---------------------------------------------------------
+   Native Checkbox Hidden
+--------------------------------------------------------- */
+
+.theme-toggle-switch input {
+    opacity: 0;
+
+    width: 0;
+    height: 0;
+}
+
+
+/* ---------------------------------------------------------
+   Slider Track
+--------------------------------------------------------- */
+
+.toggle-slider {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    cursor: pointer;
+
+    background-color: #222;
+
+    border: 1px solid #555;
+
+    transition: 0.3s ease;
+}
+
+
+/* ---------------------------------------------------------
+   Slider Knob
+--------------------------------------------------------- */
+
+.toggle-slider:before {
+    position: absolute;
+
+    content: "";
+
+    width: 16px;
+    height: 16px;
+
+    left: 4px;
+    bottom: 4px;
+
+    background-color: #888;
+
+    transition: 0.3s ease;
+}
+
+
+/* ---------------------------------------------------------
+   Active State
+--------------------------------------------------------- */
+
+input:checked + .toggle-slider {
+    background-color: #2e7d32;
+    border-color: #4caf50;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+
+    background-color: #fff;
+}
+
+
+/* ---------------------------------------------------------
+   Rounded Variant
+--------------------------------------------------------- */
+
+.toggle-slider.round {
+    border-radius: 34px;
+}
+
+.toggle-slider.round:before {
+    border-radius: 50%;
+}
+
+/************************************************************
+10. RARITY LEGEND
+
+Rarity Reference Overlay
+
+Related HTML:
+#rarity-legend-page
+#legend-matrix-grid
+
+Related JS:
+showScreen("rarity-legend")
+renderRarityLegendGrid()
+
+Purpose:
+- Display rarity icon meanings
+- Provide rarity reference guide
+- Dynamically render rarity catalog
+- Full-screen overlay experience
+
+Opened From:
+Settings → View Legend
+************************************************************/
+
+
+/* =========================================================
+   Overlay Shell
+
+   Full-screen overlay displayed above all other
+   application screens.
+========================================================= */
+
+#rarity-legend-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+
+    background: var(--greatball-color);
+
+    z-index: 2000;
+}
+
+#install-guide-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--pokeball-color);
+
+    box-sizing: border-box;
+    z-index: 2000;
+}
+
+/* =========================================================
+   Legend Launch Button
+
+   Located inside:
+   Settings Page
+========================================================= */
+
+#legend-open-btn {
+    white-space: nowrap;
+
+    min-width: 110px;
+
+    padding: 8px 12px;
+
+    font-size: 0.85rem;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   Overlay Header
+========================================================= */
+
+.legend-nav-header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    background: #111;
+    border-bottom: 1px solid #444;
+}
+
+.legend-nav-header h2 {
+    margin: 0;
+	text-align: center;
+	width: 100%
+}
+
+.legend-nav-header .return-button {
+    position: absolute;
+    left: 16px;
+    font-size: 2.2rem;    /* matches home gear */
+    padding: 0;
+    margin: 0;
+    background: transparent;
+}
+
+
+/* =========================================================
+   Scroll Container
+
+   Owns scrolling for the entire legend content area.
+========================================================= */
+
+.legend-scroll-frame {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 20px;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   Legend Grid
+
+   Populated By:
+   renderRarityLegendGrid()
+
+   Container:
+   #legend-matrix-grid
+========================================================= */
+
+#legend-matrix-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(140px, 1fr));
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   Legend Entry Tile
+
+   Generated By:
+   renderRarityLegendGrid()
+
+   JS Classes:
+   .legend-row-tile
+   .legend-tile-icon
+   .legend-tile-text
+========================================================= */
+
+.legend-row-tile {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 16px;
+
+    text-align: center;
+
+    background: #111;
+
+    border: 1px solid #333;
+    border-radius: 8px;
+}
+
+
+/* =========================================================
+   Rarity Icon
+========================================================= */
+
+.legend-tile-icon {
+    font-size: 1.5rem;
+
+    color: #fff;
+}
+
+
+/* =========================================================
+   Rarity Label
+========================================================= */
+
+.legend-tile-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    color: #aaa;
+}
+
+/************************************************************
+11. QUIZ SETUP
+
+Challenge Configuration Screen
+
+Related HTML:
+#quiz-setup-page
+
+Related JS:
+Quiz Setup Engine
+startQuizBattle()
+
+Purpose:
+- Configure challenge parameters
+- Select question count
+- Select challenge category
+- Prepare Quiz Arena launch
+
+Reached From:
+Collection Overview
+→ Gym Challenge Selector
+→ Quiz Setup
+************************************************************/
+
+
+/* =========================================================
+   Configuration Grid
+
+   Used For:
+   - Question Count Selection
+   - Category Selection
+========================================================= */
+
+.quiz-param-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(90px, 1fr));
+
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+
+/* =========================================================
+   Selection Tiles
+
+   Used For:
+   - Question Quantity
+   - Topic Category
+
+   Selected state is controlled by JS through:
+   .active
+========================================================= */
+
+.param-tile {
+    background: #0f0f0f;
+    color: #ccc;
+
+    border: 2px solid #333;
+    border-radius: 8px;
+
+    padding: 12px 6px;
+
+    font-size: 1rem;
+    font-weight: bold;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition: all 0.15s ease;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =========================================================
+   Active Selection State
+
+   Applied By:
+   Quiz Setup Engine
+========================================================= */
+
+.param-tile.active {
+    background: #0078ff;
+    color: #fff;
+
+    border-color: #3fa9f5;
+
+    box-shadow:
+        0 4px 12px rgba(
+            0,
+            120,
+            255,
+            0.35
+        );
+}
+
+/************************************************************
+12. QUIZ ARENA
+
+Live Challenge Battle Screen
+
+Related HTML:
+#quiz-arena-page
+#quiz-progress-track
+#quiz-question-text
+#quiz-options-matrix
+
+Related JS:
+Quiz Battle Engine
+
+Purpose:
+- Display active challenge
+- Present questions
+- Track score
+- Track question progress
+- Present answer choices
+- Manage live challenge state
+
+Flow:
+Gym Challenge Selector
+    ↓
+Quiz Setup
+    ↓
+Quiz Arena
+************************************************************/
+
+
+/* =========================================================
+   Arena Header Metrics
+
+   Displays:
+   - Current difficulty
+   - Current score
+========================================================= */
+
+.quiz-arena-meta {
+    background: #222;
+
+    padding: 4px 12px;
+
+    border-radius: 20px;
+
+    font-size: 1.2rem;
+    font-weight: bold;
+
+    color: #f5c542;
+}
+
+.quiz-arena-score {
+    font-size: 1.3rem;
+    font-weight: bold;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   Challenge Progress Tracker
+
+   Connected To:
+   #quiz-progress-track
+
+   Updated By:
+   Quiz Battle Engine
+========================================================= */
+
+.quiz-progress-track {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 6px;
+
+    width: 100%;
+
+    margin: 10px 0 5px 0;
+
+    font-size: 1.1rem;
+}
+
+
+/* =========================================================
+   Arena Body Layout
+
+   Owns:
+   - Question Card
+   - Answer Matrix
+========================================================= */
+
+.quiz-arena-body {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: flex-start;
+
+    flex: 1;
+
+    padding: 15px 10px 35px 10px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   Question Display Card
+
+   Contains:
+   #quiz-question-text
+========================================================= */
+
+.quiz-question-card {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex: 0;
+	min-height: 120px;
+
+    margin-bottom: 20px;
+
+    padding: 24px 16px;
+
+    text-align: center;
+
+    background: #1a1a1a;
+
+    border: 2px solid #333;
+    border-radius: 14px;
+}
+
+
+/* =========================================================
+   Question Text
+========================================================= */
+
+#quiz-question-text {
+    margin: 0;
+
+    font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+
+    line-height: 1.4;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   Answer Options Container
+
+   Connected To:
+   #quiz-options-matrix
+========================================================= */
+
+.quiz-options-matrix {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   Answer Buttons
+
+   Generated/Updated By:
+   Quiz Battle Engine
+
+   Supports:
+   - Touch devices
+   - Mobile gameplay
+   - Keyboard interaction
+========================================================= */
+
+.option-btn {
+    width: 100%;
+
+    padding: 16px;
+
+    background: #1a1a1a;
+    color: #ffffff;
+
+    border: 2px solid #444;
+    border-radius: 12px;
+
+    text-align: left;
+
+    font-size: 1.1rem;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        background 0.1s ease,
+        border-color 0.1s ease;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.option-btn:active {
+    background: #333;
+    border-color: #888;
+}

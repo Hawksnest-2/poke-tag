@@ -1745,6 +1745,7 @@ Opens Settings page.
 
    Used For:
    - Audio Toggle
+   - Volume Control Dropdown   
    - Expert Mode Toggle
    - Default Filter Settings
    - Rarity Legend Access
@@ -1765,6 +1766,25 @@ Opens Settings page.
     border-radius: 8px;
 }
 
+
+/* =========================================================
+   Volume Control Dropdown
+========================================================= */
+
+.settings-dropdown {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #444444;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.settings-dropdown:focus {
+    border-color: var(--pokeball-color, #ef5350); /* Or your primary accent color */
+    outline: none;
+}
 
 /* =========================================================
    Control Label Block
@@ -2445,3 +2465,4 @@ Quiz Arena
     background: #333;
     border-color: #888;
 }
+

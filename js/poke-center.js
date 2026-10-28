@@ -59,8 +59,11 @@ let startX = 0;
 let startY = 0;
 let isDragging = false;
 let isSoundEnabled = true;
+let defaultVolumeLevel = 0.6; // New state variable (Defaulting to Medium)
 let defaultViewerFilter = "all";
 let isExpertQuizMode = false;
+
+
 
 /******************************************************************************
 DOM REFERENCES
@@ -76,6 +79,7 @@ const settingsCopyBtn = document.getElementById("settings-copy-btn");
 const settingsImportBtn = document.getElementById("settings-import-btn");
 const resetAllButton = document.getElementById("reset-all-button");
 const settingsDefaultFilter = document.getElementById("settings-default-filter");
+const settingsVolumeSelect = document.getElementById("settings-volume-select"); 
 /* Legend Modal References */
 const rarityLegendPage = document.getElementById("rarity-legend-page");
 const legendOpenBtn = document.getElementById("legend-open-btn");
@@ -181,6 +185,16 @@ function loadOwnedCards() {
 	if (settingsSoundToggle) {
 		settingsSoundToggle.checked = isSoundEnabled;
 	}
+	const volumePref = localStorage.getItem("defaultVolumePreference");
+	if (volumePref !== null) {
+		defaultVolumeLevel = parseFloat(volumePref);
+	} else {
+		defaultVolumeLevel = 0.6; // Fallback default
+	}
+
+    if (settingsVolumeSelect) {
+        settingsVolumeSelect.value = defaultVolumeLevel;
+    }
 
     // 2. Collection Progress Profile Parser
     const raw = localStorage.getItem("ownedCards");
@@ -536,6 +550,7 @@ function catchRandomPokemon() {
 			const catchAudio = document.getElementById("catch-sound");
 			if (catchAudio) {
 				catchAudio.currentTime = 0;
+				catchAudio.volume = defaultVolumeLevel;
 				catchAudio.play().catch(e => console.log("Audio playback blocked:", e));
 			}
 		}
@@ -850,6 +865,14 @@ if (settingsSoundToggle) {
         localStorage.setItem("audioMutePreference", isSoundEnabled);
     });
 }
+/* Audio Volume Control Configuration Settings Change Listener */
+if (settingsVolumeSelect) {
+    settingsVolumeSelect.addEventListener("change", (e) => {
+        defaultVolumeLevel = parseFloat(e.target.value);
+        localStorage.setItem("defaultVolumePreference", defaultVolumeLevel);
+    });
+}
+
 if (settingsCopyBtn) {
     settingsCopyBtn.addEventListener("click", () => {
         if (settingsBackupBox) {
@@ -1320,3 +1343,5 @@ optionButtons.forEach(btn => {
         handleOptionChoiceClick(idx);
     });
 });
+
+
