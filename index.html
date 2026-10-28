@@ -285,33 +285,42 @@
 					<button id="legend-open-btn" class="settings-action-btn legend-btn">View Legend</button>
 				</div>
 			</div>
+			
+			<!-- Audio Settings -->
+			<div class="settings-card">
+				<h3>🔊 Audio Settings</h3>
 
-			<!-- Audio Control Row -->
-			<div class="settings-control-row">
-				<div class="control-label-block">
-					<span class="control-main-title">🎵 Audio System Feedback</span>
-					<span class="control-sub-desc">Play catch sound FX notifications instantly.</span>
+				<!-- Sound FX Toggle -->
+				<div class="settings-control-row">
+					<div class="control-label-block">
+						<span class="control-main-title">🎵 Audio Sound FX</span>
+						<span class="control-sub-desc">
+							Enable/Disable sound FX notifications when you catch a new card.
+						</span>
+					</div>
+					<div class="control-action-block">
+						<label class="theme-toggle-switch">
+							<input type="checkbox" id="settings-sound-toggle" checked>
+							<span class="toggle-slider round"></span>
+						</label>
+					</div>
 				</div>
-				<div class="control-action-block">
-					<label class="theme-toggle-switch">
-						<input type="checkbox" id="settings-sound-toggle" checked>
-						<span class="toggle-slider round"></span>
-					</label>
-				</div>
-			</div>
 
-			<!-- Volume Level Control Row -->
-			<div class="settings-control-row">
-				<div class="control-label-block">
-					<span class="control-main-title">🔊 Default Audio Volume</span>
-					<span class="control-sub-desc">Adjust the default loudness of app sound effects.</span>
-				</div>
-				<div class="control-action-block">
-					<select id="settings-volume-select" class="settings-dropdown">
-						<option value="0.1">Low</option>
-						<option value="0.5" selected>Medium</option>
-						<option value="1.0">High</option>
-					</select>
+				<!-- Volume Level -->
+				<div class="settings-control-row">
+					<div class="control-label-block">
+						<span class="control-main-title">🔊 Audio Volume</span>
+						<span class="control-sub-desc">
+							Adjust the default loudness of app sound effects.
+						</span>
+					</div>
+					<div class="control-action-block">
+						<select id="settings-volume-select" class="settings-dropdown">
+							<option value="0.1">Low</option>
+							<option value="0.5" selected>Medium</option>
+							<option value="1.0">High</option>
+						</select>
+					</div>
 				</div>
 			</div>
 
