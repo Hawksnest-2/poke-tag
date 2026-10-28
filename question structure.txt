@@ -1,0 +1,378 @@
+to understand the desired question philosophy and framework refer to the following:
+
+Core Philosophies:
+
+ - quiz questions are intended to be a fun experience, not a test or exam... by having fun, success, but also a challenge the players may accidentally learn something as a side effect.
+ - Expert questions should measure understanding and familiarity with a field, not memorization of facts.
+
+Avoid questions that are primarily:
+ - Who won...
+ - What year...
+ - Who played...
+ - What port...
+ - What RFC...
+ - What actor...
+
+Preferred types of questons would be:
+ - Concepts
+ - Techniques
+ - Systems
+ - Terminology
+ - Processes
+ - Strategies
+ - Relationships
+
+
+General Difficulty Definitions:
+Difficulty		Audience
+Easy			Kids, families, casual players
+Medium			Teens and general adults
+Hard			Enthusiasts and well-read hobbyists
+Expert			College-level knowledge, professionals, serious hobbyists
+
+Another way to think about it:
+Difficulty		Audience
+Easy			Casual person
+Medium			Informed person
+Hard			Enthusiast
+Expert			Practitioner / serious enthusiast
+
+even another way to think about it:
+Difficulty		Audience
+Easy	      = Casual familiarity
+Medium  	  = General knowledge
+Hard   		  = Enthusiast knowledge
+Expert 		  = Practitioner knowledge
+
+
+
+additional difficulty definitions:
+Easy
+ - Typical Audience
+     - Ages 8+
+     - General public
+     - Casual players
+ - Goal
+     - A player should feel:
+       - "I know this."
+       - A casual person should know most of these.
+       - 50-80% correct
+
+   Examples:
+     DNA
+     Mount Everest
+     Basketball
+     Mona Lisa
+     Pikachu
+
+   Think:
+     - General cultural literacy.
+
+
+Medium
+ - Typical Audience
+     - Ages 12+
+     - Middle School
+     - High School
+     - Interested adults
+ - Goal
+     - A player should feel:
+       - "I've learned this somewhere."
+       - Someone who paid attention in school or enjoys the topic should do well.
+       - Expected Success
+          - 40-70%
+
+   Examples:
+     Photosynthesis
+     Renaissance
+     Penalty Kick
+     Photoshop Layer
+
+   Think:
+   - Interested hobbyist.
+
+
+Hard
+ - Typical Audience
+     - Ages 15+
+     - High School Honors
+     - College Freshman
+     - Dedicated hobbyists
+ - Goal
+     - A player should feel:
+       - "I recognize that term."
+     - Requires meaningful exposure to the subject.
+     - Expected Success
+     - 15-40%
+
+   Examples:
+     Ecotone
+     Libero
+     Constructivism
+     Showrunner
+     Big O Notation
+
+   Think:
+   - Enthusiast level.
+
+
+Expert
+ - Typical Audience
+   - 18+
+   - College educated
+   - Serious enthusiasts
+   - Practitioners
+   - Professionals
+ - Goal
+   - Requires subject-specific knowledge.
+   - A player should feel:
+     - "I know this because I'm into the subject."
+      Not:
+     - "I memorized trivia."
+   - Expected Success
+     - 5-20%
+
+   Examples:
+     Ekphrasis
+     VO2 Max
+     CRISPR
+     Ludonarrative Dissonance
+     Thermohaline Circulation
+
+   Think:
+   - Practitioner, student, coach, or serious hobbyist.
+   - Build Expert categories that reward understanding of a field rather than memorization of trivia.
+
+Category Rules:
+
+Category structure:
+
+Category Key	Display Name					What it covers
+stem_tech		STEM & Technology				Pure Mathematics, Computer Science, Coding, Engineering, Logic.
+nature_sci		Nature & Science				Physics, Chemistry, Biology, Astronomy, Earth Science, Animals.
+sports_rec		Sports & Recreation				Professional Sports, Olympics, Chess, Board Games, Video Games, Fitness.
+arts_lit		Arts & Literature				Classic Books, Paintings, Mythology, Theater, Architecture, Philosophy.
+pop_culture		Entertainment & Pop Culture		Movies, TV Series, Music, Celebrities, Modern Media Trends.
+
+
+
+
+
+STEM & Technology Expert Rules
+     Good Easy:
+      - Planet
+      - Gravity
+      - DNA
+
+     Good Medium:
+      - Photosynthesis
+      - Atom
+      - Ecosystem
+
+     Good Hard:
+      - Entropy
+      - Machine Learning
+      - Tectonic Plates
+
+     Good Expert:
+      - CRISPR
+      - Barycenter
+      - Hill Sphere
+      - Open-Closed Principle
+      - PCA
+      - Bayesian Inference
+
+     Avoid:
+      - What year?
+      - Who invented?
+      - Model numbers?
+
+     Focus on:
+      - Concepts
+      - Scientific principles
+      - Computing architecture
+      - Mathematics
+      - Physics
+      - Biology
+
+
+Nature & Science Expert Rules
+     Good:
+      - Thermohaline Circulation
+      - Keystone Species
+      - Biomagnification
+      - Rossby Waves
+      - Karstification
+
+     Avoid:
+      - Bird trivia
+      - Species trivia
+      - Latin names
+
+     Focus on:
+      - Ecology
+      - Climate
+      - Oceanography
+      - Geology
+      - Evolution
+      - Earth systems
+
+
+Sports & Recreation Expert Rules
+     Good Easy:
+      - Touchdown
+      - Home Run
+      - Penalty Kick
+
+     Good Medium:
+      - Marathon
+      - Hat Trick
+      - Pole Position
+	 
+	 Good Hard:
+      - Libero
+      - Belaying
+      - Penalty Kill
+	 
+     Avoid:
+      - Championship years
+      - Who won?
+      - Roster trivia
+
+     Focus on:
+      - Athlete knowledge
+      - Coach knowledge
+      - Outdoor skills
+      - Sport science
+      - Strategy
+
+     The category should reward:
+      - People who participate in sports.
+     not:
+      - People who watch ESPN.
+
+
+Arts & Literature Expert Rules
+     This category had the most important rule.
+      - Don't make it feel like a vocabulary test
+
+     Bad:
+      - What is ekphrasis?
+      - What is sfumato?
+
+     Good:
+      - A passage that vividly describes a work of visual art is an example of...
+      - The soft transitions between light and shadow in Da Vinci's work demonstrate...
+
+     Target:
+      - Humanties enthusiasts
+      - Readers
+      - Writers
+      - Art-history fans
+
+     Strong concepts:
+      - Diegesis
+      - Ekphrasis
+      - Hamartia
+      - Anagnorisis
+      - Tenebrism
+      - Sfumato
+      - Intertextuality
+
+     Good Hard:
+      - Chiaroscuro
+      - Motif
+      - Constructivism
+	  
+	 Good Expert:
+      - Ekphrasis
+      - Diegesis
+      - Synecdoche
+      - Intertextuality
+
+Entertainment & Pop Culture Expert Rules
+     Big discovery:
+      - Production knowledge > Celebrity knowledge
+
+     Good Easy:
+      - Batman
+      - Mario
+      - Jedi
+
+     Good Medium:
+      - Hogwarts
+      - Infinity Stones
+      - Anime
+
+     Good Hard:
+      - Showrunner
+      - MacGuffin
+      - Diegetic Music
+	  
+	 Good Expert:
+      - Auteur Theory
+      - Bottle Episode
+      - Retcon
+      - Leitmotif
+      - Mise-en-scène
+      - Ludonarrative Dissonance
+
+     Less ideal:
+      - Who starred in...
+      - What year...
+      - Celebrity facts...
+
+     Best questions test:
+      - Storytelling
+      - Film production
+      - Game design
+      - TV production
+      - Media literacy
+
+
+
+
+
+Question Writing Rules
+ - We gradually settled on these:
+    - Prefer Context
+
+  Bad:
+   - What is a Metroidvania?
+
+  Better:
+   - A game genre featuring interconnected exploration and ability-gated progression is commonly called a...
+   - Avoid Definition Flashcards
+
+  Bad:
+   - Define hamartia.
+
+  Better:
+   - The tragic flaw contributing to a hero's downfall is known as...
+
+  Prefer Recognition Over Recall
+   - Good trivia lets the player think:
+      - I've heard that before...
+     instead of:
+      - I need to memorize obscure facts.
+
+  Concept > Date
+   - If choosing between:
+      - What year was...
+     and
+      - What concept explains...
+   - we consistently chose the concept.
+
+   - try to avoid providing the answer directly in the question, especially for Hard and Expert difficulties, . 
+     Example: If the answer is "homing pigeon"... the words 'homing' or 'pigeon' should not be in the question.
+
+Technical Lessons
+
+Category Names Must Match Exactly
+      - "stem_tech"
+      - "nature_sci"
+	  - "sports_rec"
+	  - "arts_lit"
+      - "pop_culture"
+	  
+

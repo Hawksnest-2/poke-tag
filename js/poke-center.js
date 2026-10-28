@@ -51,6 +51,7 @@ let currentCollectionData = null;
 let pendingCatchRefresh = false;
 let isRewardSequenceActive = false;
 let currentModalCard = null;
+let modalNavigationEnabled = false;
 let scale = 1;
 let startDistance = 0;
 let currentX = 0;
@@ -125,6 +126,8 @@ const modalImage = document.getElementById("modal-image");
 const modalNumber = document.getElementById("modal-number");
 const modalName = document.getElementById("modal-name");
 const modalClose = document.getElementById("modal-close");
+const modalPrevCard = document.getElementById("modal-prev-card");
+const modalNextCard = document.getElementById("modal-next-card");
 
 /******************************************************************************
 SETTINGS OPERATIONS (SOUND, MIGRATION BACKUPS, SYSTEM RESET)
@@ -509,7 +512,14 @@ CARD MODAL
 ******************************************************************************/
 function openCardModal(card, isOwned) {
     currentModalCard = card;
-    modalImage.src = isOwned ? `./collections/${currentCollectionId}/${card.file}` : `./assets/logos/cardback.jpg`;
+	    modalNavigationEnabled = isOwned;
+    if (modalPrevCard) {
+        modalPrevCard.classList.toggle("hidden", !isOwned);
+    }
+    if (modalNextCard) {
+        modalNextCard.classList.toggle("hidden", !isOwned);
+    }
+    modalImage.src = isOwned ? `./collections/${currentCollectionId}/${card.file}` : `./assets/logos/cardback.jpg`;
     modalNumber.textContent = "#" + String(card.cardNumber).padStart(3, "0");
     modalName.textContent = card.name || "";
     document.getElementById("modal-rarity-icon").textContent = rarityLegend[card.rarity] || "";
@@ -518,6 +528,36 @@ function openCardModal(card, isOwned) {
     document.getElementById("modal-catch-status").textContent = "";
     document.getElementById("modal-collection-count").textContent = "";
     cardModal.classList.remove("hidden");
+}
+
+function navigateOwnedCard(direction) {
+    if (
+        !modalNavigationEnabled ||
+        !currentCollectionData ||
+        !currentCollectionId ||
+        !currentModalCard
+    ) {
+        return;
+    }
+
+    const ownedInCollection = currentCollectionData.filter(card => {
+        const key = `${currentCollectionId}:${card.cardNumber}`;
+        return ownedCards.get(key) === true;
+    });
+
+    if (ownedInCollection.length <= 1) return;
+
+    const currentIndex = ownedInCollection.findIndex(
+        card => card.cardNumber === currentModalCard.cardNumber
+    );
+
+    if (currentIndex === -1) return;
+
+    const nextIndex =
+        (currentIndex + direction + ownedInCollection.length) %
+        ownedInCollection.length;
+
+    openCardModal(ownedInCollection[nextIndex], true);
 }
 
 /******************************************************************************
@@ -583,6 +623,14 @@ function catchRandomPokemon() {
         statusEl.textContent = "🎉 NEW CARD COLLECTED";
     }
     countEl.textContent = `${ownedCount} / ${totalCards} Collected`;
+
+	modalNavigationEnabled = false;
+	if (modalPrevCard) {
+	    modalPrevCard.classList.add("hidden");
+	}
+	if (modalNextCard) {
+	    modalNextCard.classList.add("hidden");
+	}
 
     cardModal.classList.remove("hidden");
     pendingCatchRefresh = true;
@@ -826,6 +874,19 @@ if (modalClose) {
             }
         }
     });
+}
+
+/* Card Modal Left Right Navigation */
+if (modalPrevCard) {
+    modalPrevCard.addEventListener("click", () => {
+        navigateOwnedCard(-1);
+    });
+}
+
+if (modalNextCard) {
+    modalNextCard.addEventListener("click", () => {
+        navigateOwnedCard(1);
+    });
 }
 
 

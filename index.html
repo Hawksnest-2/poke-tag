@@ -480,19 +480,37 @@
             <div class="modal-card-body">
                 <img id="modal-image" src="" alt="Card Preview">
                 <div class="modal-metadata">
-                   <div class="modal-title-line">
-                        <span id="modal-number"></span>
-                        <span id="modal-name"></span>
-                   </div>
-                   <div class="modal-rarity-line">
-                        <span id="modal-rarity-icon"></span>
-                        <span id="modal-rarity-text"></span>
-                    </div>
-                    <div class="modal-status-line">
-                        <div id="modal-catch-status"></div>
-                        <div id="modal-collection-count"></div>
-                    </div>
-                 </div>
+					<div class="modal-card-nav-row">
+					    <button
+							id="modal-prev-card"
+							class="modal-nav-btn hidden"
+							type="button"
+							aria-label="Previous owned card">
+							❮
+						</button>
+					<div class="modal-card-summary">
+						<div class="modal-title-line">
+							<span id="modal-number"></span>
+							<span id="modal-name"></span>
+						</div>
+						<div class="modal-rarity-line">
+							<span id="modal-rarity-icon"></span>
+							<span id="modal-rarity-text"></span>
+						</div>
+						<div class="modal-status-line">
+							<div id="modal-catch-status"></div>
+							<div id="modal-collection-count"></div>
+						</div>
+					</div>
+						<button
+							id="modal-next-card"
+							class="modal-nav-btn hidden"
+							type="button"
+							aria-label="Next owned card">
+							❯
+						</button>
+					</div>
+				 </div>
             </div>
         </div>
     </div>

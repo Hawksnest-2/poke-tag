@@ -1025,13 +1025,10 @@ Purpose:
 .card-modal {
     position: fixed;
     inset: 0;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
-    background: rgba(0, 0, 0, .85);
-
+    background: #000;
     z-index: 99999;
 }
 
@@ -1046,22 +1043,53 @@ Purpose:
 .card-modal-content {
     display: flex;
     flex-direction: column;
-
     width: 340px;
     max-width: 90%;
-
     padding: 16px;
-
     box-sizing: border-box;
-
     background-color: #1a1a1a;
-
     border: 4px solid transparent;
     border-radius: 12px;
-
     overflow: hidden;
 }
 
+.modal-card-summary {
+    flex: 1;
+    text-align: center;
+}
+
+.modal-card-nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    width: 100%;
+}
+
+.modal-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	flex-shrink: 0;
+	width: 35px;
+	height: 40px;
+	border: 2px solid #444 !important;
+	border-radius: 12px;
+	background: #000 !important;
+	color: #fff !important;
+	font-size: 28px;
+	font-weight: bold;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.modal-nav-btn:active {
+	transform: scale(0.92);
+}
+
+.modal-nav-btn.hidden {
+	display: none;
+}
 
 /* =========================================================
    Dynamic Rarity Border States
