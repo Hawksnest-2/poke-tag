@@ -59,7 +59,7 @@ let startX = 0;
 let startY = 0;
 let isDragging = false;
 let isSoundEnabled = true;
-let defaultVolumeLevel = 0.6; // New state variable (Defaulting to Medium)
+let defaultVolumeLevel = 0.5; // New state variable (Defaulting to Medium)
 let defaultViewerFilter = "all";
 let isExpertQuizMode = false;
 
@@ -189,7 +189,7 @@ function loadOwnedCards() {
 	if (volumePref !== null) {
 		defaultVolumeLevel = parseFloat(volumePref);
 	} else {
-		defaultVolumeLevel = 0.6; // Fallback default
+		defaultVolumeLevel = 0.5; // Fallback default
 	}
 
     if (settingsVolumeSelect) {
